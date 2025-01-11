@@ -53,6 +53,6 @@ export default tseslint.config({
 
 docker build -t reactapp .
 
-docker run -p 3000:5173 reactapp
+docker run -p 5173:5173 reactapp
 
-Now view your website @ http://localhost:3000
+Now view your website @ http://localhost:5173
