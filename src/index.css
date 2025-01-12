@@ -17,6 +17,10 @@ a {
   color: inherit;
 }
 
+p {
+  margin: 0;
+}
+
 li {
   list-style: none;
 } 
@@ -25,4 +29,61 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #C7C1BEFF;
+  border-radius: 5px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slideUp {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+.typing-dot {
+    height: 5px;
+    width: 5px;
+    border-radius: 100%;
+    margin-left: 4px;
+    display: inline-block;
+    background-color: #5C5E69;
+    animation: 1.2s typing-dot ease-in-out infinite;
+}
+
+.typing-dot:nth-of-type(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-dot:nth-of-type(3) {
+    animation-delay: 0.25s;
+}
+
+@keyframes typing-dot {
+    15% {
+        transform: translateY(-35%);
+        opacity: 0.5;
+    }
+    30% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+.overflow-y-auto {
+    scroll-behavior: smooth;
 }
