@@ -1,25 +1,44 @@
 import React, { useEffect, useState } from 'react';
+import { MarkdownRenderer } from '../utils/MarkdownRenderer';
 
-const TypewriterEffect = ({ text }: { text: string }) => {
+interface TypewriterEffectProps {
+    text: string;
+    speed?: number;
+    setIsTyping: (isTyping: boolean) => void;
+    onTypingComplete?: () => void;
+}
+
+const TypewriterEffect: React.FC<TypewriterEffectProps> = ({ 
+    text, 
+    speed = 2, 
+    setIsTyping,
+    onTypingComplete 
+}) => {
     const [displayText, setDisplayText] = useState('');
     
     useEffect(() => {
+        setIsTyping(true);
         let i = 0;
         setDisplayText('');
-        
+
         const intervalId = setInterval(() => {
             setDisplayText(text.slice(0, i));
             i++;
             
             if (i > text.length) {
                 clearInterval(intervalId);
+                setIsTyping(false);
+                onTypingComplete?.();
             }
-        }, 5);
+        }, speed);
         
-        return () => clearInterval(intervalId);
-    }, [text]);
+        return () => {
+            clearInterval(intervalId);
+            setIsTyping(false);
+        };
+    }, [text, speed]);
     
-    return <span>{displayText}</span>;
+    return <MarkdownRenderer content={displayText} />;
 };
 
 export default TypewriterEffect;

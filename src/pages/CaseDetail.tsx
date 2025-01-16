@@ -1,7 +1,12 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import PDFViewer from '../components/PDFViewer';
+
 import { FaArrowUp, FaUser } from "react-icons/fa";
 import { IoMdArrowBack } from "react-icons/io";
+import { TbDownload } from "react-icons/tb";
+import { RxPencil2 } from "react-icons/rx";
+import { BiTrash } from "react-icons/bi";
 import { SiRobotframework } from "react-icons/si";
 import TypewriterEffect from '../utils/TypewriterEffect';
 
@@ -15,6 +20,7 @@ const CaseDetail = () => {
     // Chat state management
     const [input, setInput] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isTyping, setIsTyping] = useState<boolean>(false);
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
         {
             type: 'bot',
@@ -34,6 +40,7 @@ const CaseDetail = () => {
             content: "I've reviewed the W-2 forms. Everything looks correct, but we're still missing the 1099-INT statement."
         }
     ]);
+    
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
     // Mock data - expanded list
@@ -131,6 +138,12 @@ const CaseDetail = () => {
         }
     };
 
+    // PDF Viewer State
+    const [pdfViewer, setPdfViewer] = useState<boolean>(false);
+    const handleOpenPDFViewer = () => {
+        setPdfViewer(true);
+    }
+
     return (
         <div className="w-full h-screen flex bg-gray-50 p-8 gap-8">
             {/* Left Column - Make scrollable */}
@@ -177,26 +190,83 @@ const CaseDetail = () => {
                     <h2 className="text-xl font-600 text-black mb-4 text-left">Uploaded Documents</h2>
                     <div className="space-y-3">
                         {uploadedDocs.map(doc => (
-                            <div key={doc.id} className="flex items-center justify-between p-3 bg-gray rounded-lg">
-                                <span className="text-black-light">{doc.name}</span>
-                                <span className="text-sm text-black-light">{doc.date}</span>
+                            <div 
+                                key={doc.id} 
+                                className="flex items-center justify-between cursor-pointer p-3 bg-gray rounded-lg hover:bg-gray-light transition-all duration-150"
+                                onClick={handleOpenPDFViewer}
+                            >
+                                <div className="flex items-center flex-1">
+                                    <span className="text-black-light">{doc.name}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-black-light">{doc.date}</span>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Add delete handler here
+                                        }}
+                                        className="p-2 text-black-light hover:text-black hover:bg-gray rounded-lg transition-colors duration-150"
+                                    >
+                                        <BiTrash size={18} />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open('_blank');
+                                        }}
+                                        className="p-2 text-black-light hover:text-black hover:bg-gray rounded-lg transition-colors duration-150"
+                                    >
+                                        <TbDownload size={18} />
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
+
+                {/* PDF Viewer */}
+                <PDFViewer 
+                    fileUrl={""}
+                    pdfViewer={pdfViewer}
+                    setPdfViewer={setPdfViewer}
+                />
 
                 {/* Update Required Forms Section title alignment */}
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                     <h2 className="text-xl font-600 text-black mb-4 text-left">Required Forms</h2>
                     <div className="space-y-3">
                         {requiredForms.map(form => (
-                            <div key={form.id} className="flex items-center justify-between p-3 bg-gray rounded-lg">
+                            <div 
+                                key={form.id} 
+                                className="flex items-center justify-between cursor-pointer p-3 bg-gray rounded-lg hover:bg-gray-light transition-all duration-150"
+                                onClick={handleOpenPDFViewer}
+                            >
                                 <span className="text-black-light">{form.name}</span>
-                                <span className={`px-3 py-1 rounded-full text-sm ${
-                                    form.status === 'completed' ? 'bg-green text-white' : 'bg-yellow text-black-light'
-                                }`}>
-                                    {form.status}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className={`px-3 py-1 rounded-full text-sm ${
+                                        form.status === 'completed' ? 'bg-green text-white' : 'bg-yellow text-black-light'
+                                    }`}>
+                                        {form.status}
+                                    </span>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Add modify handler here
+                                        }}
+                                        className="p-2 text-black-light hover:text-black hover:bg-gray rounded-lg transition-colors duration-150"
+                                    >
+                                        <RxPencil2 size={18} />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open('_blank');
+                                        }}
+                                        className="p-2 text-black-light hover:text-black hover:bg-gray rounded-lg transition-colors duration-150"
+                                    >
+                                        <TbDownload size={18} />
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -233,7 +303,11 @@ const CaseDetail = () => {
                                         )}
                                         <div className="text-left">
                                             {message.type === 'bot' ? (
-                                                <TypewriterEffect text={message.content} />
+                                                <TypewriterEffect 
+                                                    text={message.content} 
+                                                    setIsTyping={setIsTyping} 
+                                                    onTypingComplete={() => setIsTyping(false)}
+                                                />
                                             ) : (
                                                 message.content
                                             )}

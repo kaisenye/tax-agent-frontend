@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Nunito Sans", serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -86,4 +86,24 @@ body {
 
 .overflow-y-auto {
     scroll-behavior: smooth;
+}
+
+.markdown-content {
+    /* Add styles for markdown elements */
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: bold;
+        margin: 1em 0 0.5em;
+    }
+    
+    ul, ol {
+        margin-left: 1.5em;
+    }
+    
+    strong {
+        font-weight: bold;
+    }
+    
+    em {
+        font-style: italic;
+    }
 }
