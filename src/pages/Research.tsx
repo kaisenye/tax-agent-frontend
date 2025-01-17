@@ -277,8 +277,8 @@ const Research = () => {
                     </div>
 
                     {/* Input section */}
-                    <div className="fixed bottom-10 left-[16%] -translate-x-2/5 w-[55%] flex flex-row items-center">
-                        <div className="relative flex-1">
+                    <div className="relative w-full">
+                        <div className="relative w-[60%] left-[0] bottom-[50%]">
                             <textarea 
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
