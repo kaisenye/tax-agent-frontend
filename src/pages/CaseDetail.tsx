@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import PDFViewer from '../components/PDFViewer';
+import PDFViewer from '../components/PDFViewer/PDFViewer';
 
 import { FaArrowUp, FaUser } from "react-icons/fa";
 import { IoMdArrowBack } from "react-icons/io";

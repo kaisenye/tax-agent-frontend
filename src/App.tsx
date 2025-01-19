@@ -9,6 +9,7 @@ import Navbar from './components/Navbar'
 import Research from './pages/Research'
 import CaseList from './pages/CaseList'
 import CaseDetail from './pages/CaseDetail'
+import ClientChatSession from './pages/ClientChatSession'
 
 function App() {
   // const [initialState, setState] = useState([])
@@ -31,6 +32,7 @@ function App() {
             <Route path="/research" element={<Research />} />
             <Route path="/case" element={<CaseList />} />
             <Route path="/case/:id" element={<CaseDetail />} />
+            <Route path="/chat/:sessionId" element={<ClientChatSession />} />
           </Routes>
         </div>
       </div>
