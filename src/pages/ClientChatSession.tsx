@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 // Icons
 import { FaArrowUp, FaUser, FaPlus } from "react-icons/fa";
@@ -8,58 +8,99 @@ import { SiRobotframework } from "react-icons/si";
 
 // Components
 import FileUploadModal from '../components/Modals/FileUploadModal';
+import PDFViewer from '../components/PDFViewer/PDFViewer';
 
-interface ChatMessage {
-    type: 'user' | 'bot' | 'account';
-    content: string;
-    name?: string;
-}
+// API
+import { getAllFiles } from '../api/fileApi';
+import { FileRecord } from '../types/file.types';
 
-interface UploadedDoc {
-    id: number;
-    name: string;
-    date: string;
-}
+// Effect and Formatter
+import TypewriterEffect from '../utils/TypewriterEffect';
+
+// ChatAPI
+import { ChatMessage } from '../types/chat.types';
+import { sendChatMessage } from '../api/chatApi';
 
 const ClientChatSession = () => {
     const [input, setInput] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isThinking, setIsThinking] = useState<boolean>(false);
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
         {
             type: 'bot',
             content: "Hello! How can I assist you today?"
         }
     ]);
-    
-    const [uploadedDocs, setUploadedDocs] = useState<UploadedDoc[]>([
-        { id: 1, name: "Document 1.pdf", date: "2024-03-15" },
-        { id: 2, name: "Document 2.pdf", date: "2024-03-14" },
-    ]);
 
+    // Chat Container
     const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    // File Upload Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleFileUpload = (files: File[]) => {
-        const newDocs: UploadedDoc[] = files.map((file, index) => ({
-            id: uploadedDocs.length + index + 1,
-            name: file.name,
-            date: new Date().toISOString().split('T')[0]
-        }));
-        setUploadedDocs([...uploadedDocs, ...newDocs]);
+    // Add an interval ref to handle continuous scrolling
+    const scrollToBottom = useCallback(() => {
+        if (chatContainerRef.current) {
+            const element = chatContainerRef.current;
+            // Ensure we're actually at the bottom by checking scroll position
+            const isAtBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 100;
+            if (isAtBottom) {
+                element.scrollTop = element.scrollHeight;
+            }
+        }
+    }, []);
+
+    // Update the event parameter type
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit();
+        }
     };
 
+    // Handle Chat Submission
     const handleSubmit = async () => {
         if (!input.trim()) return;
         
-        const userMessage: ChatMessage = { 
-            type: 'user', 
-            content: input 
-        };
+        const userMessage: ChatMessage = { type: 'user', content: input };
         setChatHistory(prev => [...prev, userMessage]);
         setInput('');
         
-        // Add your chat submission logic here
+        scrollToBottom();
+        
+        setIsLoading(true);
+        setIsThinking(true);
+        
+        try {
+            const botResponse = await sendChatMessage(chatHistory, input);
+            const botMessage: ChatMessage = { 
+                type: 'bot', 
+                content: botResponse 
+            };
+            setChatHistory(prev => [...prev, botMessage]);
+            scrollToBottom();
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setIsLoading(false);
+            setIsThinking(false);
+        }
     };
+
+    // Get all files
+    const [allFiles, setAllFiles] = useState<Array<FileRecord>>([]);
+
+    useEffect(() => {
+        const fetchAllFiles = async () => {
+            const files = await getAllFiles();
+            console.log("Files", files);
+            setAllFiles(files as Array<FileRecord>);
+        };
+        fetchAllFiles();
+    }, []);
+
+    // PDF Viewer state
+    const [pdfViewer, setPdfViewer] = useState<boolean>(false);
 
     return (
         <div className="w-full h-screen flex bg-gray-50 p-8 gap-8">
@@ -78,11 +119,14 @@ const ClientChatSession = () => {
                         </button>
                     </div>
                     <div className="space-y-3">
-                        {uploadedDocs.map(doc => (
-                            <div key={doc.id} className="flex items-center justify-between p-3 bg-gray rounded-md hover:bg-gray-light transition-all duration-150">
-                                <span className="text-black-light">{doc.name}</span>
+                        {allFiles.slice(0, 1).map((file: FileRecord) => (
+                            <div key={file.id} 
+                                className="flex items-center justify-between p-3 bg-gray rounded-md hover:bg-gray-light transition-all duration-150 cursor-pointer"
+                                onClick={() => setPdfViewer(true)}
+                            >   
+                                <span className="text-black-light">W2.pdf</span>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm text-black-light">{doc.date}</span>
+                                    <span className="text-sm text-black-light">January 19, 2025</span>
                                     <button className="p-2 text-black-light hover:text-black hover:bg-gray rounded-md transition-colors duration-150">
                                         <BiTrash size={18} />
                                     </button>
@@ -99,15 +143,23 @@ const ClientChatSession = () => {
             {/* Right Column - Chat Interface */}
             <div className="w-1/2 pl-4 flex flex-col bg-white rounded-xl border border-gray-dark h-[calc(100vh-4rem)]">
                 <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6">
-                    <div className="max-w-2xl mx-auto space-y-4 mb-24">
+                    <div className="max-w-2xl mx-auto space-y-10 mb-24">
                         {chatHistory.map((message, index) => (
                             <div key={index} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`flex items-start max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'} gap-2`}>
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-blue-500' : 'bg-gray-500'}`}>
                                         {message.type === 'user' ? <FaUser /> : <SiRobotframework />}
                                     </div>
-                                    <div className={`rounded-md px-3 py-2 ${message.type === 'user' ? 'bg-gray text-black-light' : 'bg-gray-light text-black-light'}`}>
-                                        {message.content}
+                                    <div className={`rounded-md px-3 py-2 text-left ${message.type === 'user' ? 'bg-gray text-black-light' : 'bg-gray-light text-black-light'}`}>
+                                        {message.type === 'user' ? 
+                                            message.content 
+                                            : 
+                                            <TypewriterEffect 
+                                                text={message.content} 
+                                                setIsTyping={setIsThinking} 
+                                                onTypingComplete={() => setIsThinking(false)}
+                                            />
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -122,6 +174,7 @@ const ClientChatSession = () => {
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyPress}
                             placeholder="Type your message here..."
                             className="w-full px-6 py-3 pr-12 rounded-3xl bg-gray text-black-light focus:outline-none focus:ring-1 focus:ring-gray-dark"
                         />
@@ -138,11 +191,17 @@ const ClientChatSession = () => {
                 </div>
             </div>
 
+            {/* PDF Viewer */}
+            <PDFViewer 
+                fileUrl={""}
+                pdfViewer={pdfViewer}
+                setPdfViewer={setPdfViewer}
+            />
+
             {/* File Upload Modal */}
             <FileUploadModal 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onUpload={handleFileUpload}
             />
         </div>
     );

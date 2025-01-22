@@ -2,13 +2,11 @@ import React, { useState, useRef } from 'react';
 
 // File API
 import { uploadFile } from '../../api/fileApi';
-import { CustomFile } from '../../types/file.types';
 
 // Add new modal component
-const FileUploadModal = ({ isOpen, onClose, onUpload }: { 
+const FileUploadModal = ({ isOpen, onClose }: { 
     isOpen: boolean, 
     onClose: () => void, 
-    onUpload: (files: File[]) => void 
 }) => {
     const [dragActive, setDragActive] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
@@ -51,9 +49,9 @@ const FileUploadModal = ({ isOpen, onClose, onUpload }: {
 
         try {
             for (const file of uploadedFiles) {
+                console.log("Uploading file:", file);
                 await uploadFile(file as File);
             }
-            onUpload(uploadedFiles);
         } catch (error) {
             console.error('Upload failed:', error);
         } finally {

@@ -25,7 +25,7 @@ const PDFViewer = ({ fileUrl, pdfViewer, setPdfViewer }: PDFViewerProps) => {
             <div className="flex flex-col items-center justify-start relative bg-white h-[90%] border border-gray-dark overflow-hidden pb-200">
                 {/* @ts-ignore - custom element */}
                 <pdf-viewer 
-                    src={"https://tax-agent-assets.s3.us-east-1.amazonaws.com/f1040.pdf"}
+                    src={"https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf"}
                     style={{ width: '100%', height: '100%' }}
                 />
             </div>

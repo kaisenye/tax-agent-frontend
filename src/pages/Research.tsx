@@ -11,18 +11,9 @@ import { TbMessageReport } from "react-icons/tb";
 // Effect and Formatter
 import TypewriterEffect from '../utils/TypewriterEffect';
 
-// Add proper types for the chat history
-interface Reference {
-    id: string;
-    title: string;
-    url?: string;
-}
-
-interface ChatMessage {
-    type: 'user' | 'bot';
-    content: string;
-    references?: Reference[];
-}
+// ChatAPI
+import { ChatMessage } from '../types/chat.types';
+import { sendChatMessage } from '../api/chatApi';
 
 const Research = () => {
     const [input, setInput] = useState<string>('');
@@ -71,47 +62,18 @@ const Research = () => {
         setIsThinking(true);
         
         try {
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Accept": "*/*",
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-                    "User-Agent": "TaxAgent/1.0"
-                },
-                body: JSON.stringify({ 
-                    model: "gpt-4o-mini",   
-                    messages: [
-                        {
-                            role: "system",
-                            content: "You are a tax research and preparation AI assistant designed to provide accurate, efficient, and user-friendly support for individuals, small businesses, and tax professionals. Your responsibilities include answering questions about federal, state, and local tax laws; providing updates on tax legislation; assisting with eligibility for credits, deductions, and incentives; and explaining complex tax topics in simple terms. Guide users in organizing documents, clarifying forms and schedules, and estimating liabilities or refunds, while addressing industry-specific considerations and unique scenarios like multi-state income or overseas earnings. Offer tailored advice for life events such as starting a business or retiring, and ensure clear, empathetic communication with references to official sources like IRS publications. Prioritize accuracy, staying up-to-date, and simplifying tax processes to save users time and reduce stress, while reminding them to consult licensed professionals for complex issues."
-                        },
-                        ...chatHistory.map(msg => ({
-                            role: msg.type === 'user' ? 'user' : 'assistant',
-                            content: msg.content
-                        })),
-                        {
-                            role: "user",
-                            content: input
-                        },
-                    ]
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const botMessage: ChatMessage = { 
-                    type: 'bot', 
-                    content: data.choices[0].message.content 
-                };
-                setChatHistory(prev => [...prev, botMessage]);
-                scrollToBottom();
-                setIsThinking(false);
-            }
+            const botResponse = await sendChatMessage(chatHistory, input);
+            const botMessage: ChatMessage = { 
+                type: 'bot', 
+                content: botResponse 
+            };
+            setChatHistory(prev => [...prev, botMessage]);
+            scrollToBottom();
         } catch (error) {
             console.error('Error:', error);
         } finally {
             setIsLoading(false);
+            setIsThinking(false);
         }
     };
 

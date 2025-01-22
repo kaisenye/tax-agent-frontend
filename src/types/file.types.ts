@@ -1,7 +1,7 @@
-// Extend the browser's File interface
-export interface CustomFile extends File {
-  id?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  url?: string;
+export interface FileRecord {
+  file_id: string;
+  form_type: string;
+  id: string;
+  name: string;
+  status: string;
 }
