@@ -51,7 +51,7 @@ const ClientChatSession = () => {
     }, []);
 
     // Update the event parameter type
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSubmit();

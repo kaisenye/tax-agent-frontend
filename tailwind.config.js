@@ -10,18 +10,20 @@ export default {
       '2xl': '1440px',
     },
     colors: {
-      'blue': '#1fb6ff',
-      'purple': '#7e5bef',
-      'pink': '#ff49db',
-      'orange': '#ff7849',
-      'green': '#13ce66',
-      'yellow': '#ffc82c',
+      'blue': '#42A5D6FF',
+      'red': '#C11D1DFF',
+      'purple': '#9688C7FF',
+      'pink': '#CA85BCFF',
+      'orange': '#D8886DFF',
+      'green': '#75B090FF',
+      'yellow': '#E4B73AFF',
       'gray-dark': '#C7C1BEFF',
       'gray': '#EFECEBFF',
       'gray-light': '#F9F8F8FF',
+      'gray-light-light': '#FCFCFCFF',
       'white': '#ffffff',
       'black': '#1F1F1FFF',
-      'black-light': '#45413BFF',
+      'black-light': '#5E594FFF',
     },
     fontFamily: {
       sans: ['Graphik', 'sans-serif'],
@@ -34,13 +36,13 @@ export default {
       "700": "700",
     },
     fontSize: {
-      "sm": "0.875rem",
-      "base": "1rem",
-      "lg": "1.125rem",
-      "xl": "1.25rem",
-      "2xl": "1.4rem",
-      "3xl": "1.5rem",
-      "4xl": "1.75rem",
+      "sm": "11px",
+      "base": "12px",
+      "lg": "14px",
+      "xl": "15px",
+      "2xl": "18px",
+      "3xl": "24px",
+      "4xl": "28px",
     },
     extend: {
       spacing: {
@@ -50,10 +52,10 @@ export default {
       borderRadius: {
         "sm": "0.125rem",
         "md": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "1rem",
-        "2xl": "1.5rem",
-        "3xl": "2rem"
+        "lg": "0.375rem",
+        "xl": "0.5rem",
+        "2xl": "0.75rem",
+        "3xl": "1rem"
       },
       keyframes: {
         slideUp: {

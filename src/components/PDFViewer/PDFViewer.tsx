@@ -3,18 +3,19 @@ import './PDFViewerElement'; // Import the web component
 
 interface PDFViewerProps {
     fileUrl: string;
+    pdfTitle: string;
     pdfViewer: boolean;
     setPdfViewer: (pdfViewer: boolean) => void;
 }
 
-const PDFViewer = ({ fileUrl, pdfViewer, setPdfViewer }: PDFViewerProps) => {
+const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer }: PDFViewerProps) => {
     return (
         <div className={`fixed top-0 right-0 h-full w-[800px] bg-white shadow-2xl 
             transform transition-transform duration-300 ease-in-out z-50 px-6
             ${pdfViewer ? 'translate-x-0' : 'translate-x-full'}`}
         >
             <div className="flex justify-between items-center mb-2 py-4 bg-white">
-                <h2 className="text-xl font-600">PDF Viewer</h2>
+                <h2 className="text-2xl font-500">{pdfTitle}</h2>
                 <button
                     onClick={() => setPdfViewer(false)}
                     className="text-gray-dark hover:text-black"

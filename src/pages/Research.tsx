@@ -13,7 +13,7 @@ import TypewriterEffect from '../utils/TypewriterEffect';
 
 // ChatAPI
 import { ChatMessage } from '../types/chat.types';
-import { sendChatMessage } from '../api/chatApi';
+import { sendChatMessage } from '../api/chatAPI';
 
 const Research = () => {
     const [input, setInput] = useState<string>('');
@@ -101,10 +101,10 @@ const Research = () => {
                     {/* Title section - only show when no messages */}
                     {showInitialContent && (
                         <div className="pb-32 pt-12">
-                            <h1 className="text-4xl text-black font-700 leading-relaxed text-left">
-                                Tax Research Assistant
+                            <h1 className="text-3xl text-black font-500 leading-relaxed text-left">
+                                Tax Research
                                 <p className="block text-lg font-400 text-black-light mt-2 text-left">
-                                    Ask me anything about tax laws, regulations, or specific tax scenarios you'd like to understand
+                                    Ask anything about tax laws, regulations, or specific tax scenarios.
                                 </p>
                             </h1>
                         </div>
@@ -113,22 +113,22 @@ const Research = () => {
                     {/* Tips section - only show when no messages */}
                     {showInitialContent && (
                         <div className="mb-12 w-[760px]">
-                            <h2 className="text-xl font-600 text-black mb-6 text-left">Suggestions</h2>
+                            <h2 className="text-xl font-500 text-black mb-6 text-left">Suggestions</h2>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-600 mb-2 text-left">Tax Law Updates</h3>
+                                    <h3 className="font-500 mb-2 text-left">Tax Law Updates</h3>
                                     <p className="text-left">Latest changes in federal tax regulations</p>
                                 </div>
                                 <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-600 mb-2 text-left">Deductions & Credits</h3>
+                                    <h3 className="font-500 mb-2 text-left">Deductions & Credits</h3>
                                     <p className="text-left">Explore available tax benefits for 2024</p>
                                 </div>
                                 <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-600 mb-2 text-left">Business Taxation</h3>
+                                    <h3 className="font-500 mb-2 text-left">Business Taxation</h3>
                                     <p className="text-left">Small business tax obligations and benefits</p>
                                 </div>
                                 <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-600 mb-2 text-left">State Tax Guidance</h3>
+                                    <h3 className="font-500 mb-2 text-left">State Tax Guidance</h3>
                                     <p className="text-left">State-specific tax regulations and filing</p>
                                 </div>
                             </div>
@@ -146,13 +146,13 @@ const Research = () => {
                                 // Start a new section with user message
                                 const botResponse = array[index + 1];
                                 sections.push(
-                                    <div key={index} className="space-y-6 text-left">
+                                    <div key={index} className="space-y-6 text-left text-lg">
                                         {/* User message */}
                                         <div className="flex items-start gap-2">
                                             <div className="w-8 h-8 rounded-full flex items-center justify-center">
                                                 <FaUser />
                                             </div>
-                                            <div className="rounded-lg px-4 py-3 bg-gray">
+                                            <div className="rounded-lg px-3 py-2 bg-gray">
                                                 {message.content}
                                             </div>
                                         </div>
@@ -162,10 +162,10 @@ const Research = () => {
                                             <div className="flex gap-6">
                                                 {/* Bot message */}
                                                 <div className="flex-1 flex items-start gap-2">
-                                                    <div className="w-8 h-8 flex items-center justify-center mt-4">
+                                                    <div className="w-8 h-8 flex items-center justify-center">
                                                         <SiRobotframework />
                                                     </div>
-                                                    <div className="w-4/5 rounded-lg pl-4 py-1">
+                                                    <div className="w-4/5 rounded-lg pl-2 py-1">
                                                         <TypewriterEffect 
                                                             text={botResponse.content} 
                                                             setIsTyping={setIsTyping} 
@@ -201,7 +201,7 @@ const Research = () => {
                                                 {/* References section */}
                                                 <div className="w-72">
                                                     <div className="p-4 rounded-lg border border-gray-200 shadow-sm">
-                                                        <h3 className="font-medium text-gray-600 mb-3">References</h3>
+                                                        <h3 className="font-medium text-gray-500 mb-3">References</h3>
                                                         <ul className="space-y-2">
                                                             {/* Dummy references for visualization */}
                                                             {[1, 2, 3].map((num) => (
@@ -239,16 +239,16 @@ const Research = () => {
                     </div>
 
                     {/* Input section */}
-                    <div className="relative w-full">
-                        <div className="relative w-[60%] left-[0] bottom-[50%]">
+                    <div className="relative">
+                        <div className="relative w-[60%] left-[0] bottom-[60%]">
                             <textarea 
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={handleKeyPress}
                                 placeholder="Type your research question here..."
                                 rows={2}
-                                className="w-full px-6 py-4 pr-24 rounded-xl bg-gray text-black-light 
-                                           ring-2 ring-gray
+                                className="w-full px-6 py-4 pr-24 rounded-xl bg-gray-light text-black text-lg font-400
+                                           ring-1 ring-gray-light shadow-md
                                            focus:outline-none focus:ring-gray-dark focus:ring-3 transition-all duration-150 resize-none"
                             />
                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LuFileSearch, LuUser, LuSettings } from "react-icons/lu";
 import { GrDocumentText, GrStorage } from "react-icons/gr";
+import logo from '../assets/logo.svg';
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState<string>(window.location.pathname.slice(1) || 'research');
@@ -12,20 +13,21 @@ const Navbar = () => {
     { id: 'case', icon: GrStorage, label: 'Case' },
     { id: 'settings', icon: LuSettings, label: 'Settings' },
   ];
-
   const getLinkClassName = (linkId: string) => `
     flex 
     flex-row
+    ${activeLink === linkId ? 'text-black' : 'text-black-light'}
+    font-400
+    text-xl
     items-center 
     px-3
     py-2
-    border
     rounded-md
     transition-colors 
     duration-150
     ${activeLink === linkId 
-      ? 'bg-gray border-gray-dark' 
-      : 'border-gray-light hover:bg-gray hover:border-gray-dark'
+      ? 'bg-gray' 
+      : 'hover:bg-gray hover:text-black'
     }
   `;
 
@@ -34,8 +36,8 @@ const Navbar = () => {
       {/* Top Section with Logo and Navigation */}
       <div className="flex-1">
         {/* Logo Section */}
-        <div className="flex items-center mb-8">
-          <span className="text-xl font-semibold text-gray-800">Tax Agent</span>
+        <div className="flex items-center mb-8 mt-2 ml-4">
+          <img src={logo} alt="Luca Logo" className="w-16 h-auto" />
         </div>
 
         {/* Navigation Links */}
@@ -47,7 +49,7 @@ const Navbar = () => {
                 onClick={() => setActiveLink(id)}
                 className={getLinkClassName(id)}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4" />
                 <span className="ml-4">{label}</span>
               </Link>
             </li>
@@ -57,11 +59,11 @@ const Navbar = () => {
 
       {/* User Section  */}
       <div className="flex flex-col gap-2 pt-4 pb-4 border-t border-gray">
-        <div className="flex flex-row items-center gap-2 bg-gray rounded-md p-2">
+        <div className="flex flex-row items-center gap-3 bg-gray rounded-md p-2 border border-gray-dark">
             <div className="w-6 h-6 bg-gray-light rounded-full flex items-center justify-center">
                 <LuUser className="w-4 h-4" />
             </div>
-            <span className="text-gray-800">
+            <span className="text-lg font-500 text-black-light">
                 Joe Doe
             </span>
         </div>

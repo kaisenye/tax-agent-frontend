@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 
 // Pages
 import Research from './pages/Research'
+import Assistant from './pages/FileUpload'
 import CaseList from './pages/CaseList'
 import CaseDetail from './pages/CaseDetail'
 import ClientChatSession from './pages/ClientChatSession'
@@ -30,6 +31,7 @@ function App() {
         <div className="ml-56">
           <Routes>
             <Route path="/research" element={<Research />} />
+            <Route path="/assistant" element={<Assistant />} />
             <Route path="/case" element={<CaseList />} />
             <Route path="/case/:id" element={<CaseDetail />} />
             <Route path="/chat/:sessionId" element={<ClientChatSession />} />
