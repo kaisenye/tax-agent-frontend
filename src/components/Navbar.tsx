@@ -9,7 +9,7 @@ const Navbar = () => {
 
   const navLinks = [
     { id: 'research', icon: LuFileSearch, label: 'Research' },
-    { id: 'assistant', icon: GrDocumentText, label: 'Assistant' },
+    // { id: 'assistant', icon: GrDocumentText, label: 'Assistant' },
     { id: 'case', icon: GrStorage, label: 'Case' },
     { id: 'settings', icon: LuSettings, label: 'Settings' },
   ];

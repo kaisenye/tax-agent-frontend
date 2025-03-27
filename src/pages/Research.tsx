@@ -113,8 +113,8 @@ const Research = () => {
                     {/* Tips section - only show when no messages */}
                     {showInitialContent && (
                         <div className="mb-12 w-[760px]">
-                            <h2 className="text-xl font-500 text-black mb-6 text-left">Suggestions</h2>
-                            <div className="grid grid-cols-2 gap-4">
+                            <h2 className="text-xl font-500 text-black mb-6 text-left">Tips & Tricks</h2>
+                            <div className="grid grid-cols-2 gap-4 text-lg">
                                 <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
                                     <h3 className="font-500 mb-2 text-left">Tax Law Updates</h3>
                                     <p className="text-left">Latest changes in federal tax regulations</p>

@@ -19,7 +19,7 @@ import TypewriterEffect from '../utils/TypewriterEffect';
 
 // ChatAPI
 import { ChatMessage } from '../types/chat.types';
-import { sendChatMessage } from '../api/chatApi';
+import { sendChatMessage } from '../api/chatAPI';
 
 const ClientChatSession = () => {
     const [input, setInput] = useState<string>('');
@@ -196,6 +196,7 @@ const ClientChatSession = () => {
                 fileUrl={""}
                 pdfViewer={pdfViewer}
                 setPdfViewer={setPdfViewer}
+                pdfTitle={""}
             />
 
             {/* File Upload Modal */}
