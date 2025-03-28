@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AnimatedContainer from '../components/AnimatedContainer';
 import { Link } from 'react-router-dom';
 import PDFViewer from '../components/PDFViewer/PDFViewerPro';
 
@@ -281,96 +282,98 @@ const CaseDetail = () => {
     };
 
     return (
-        <div className="w-full h-screen flex flex-col bg-gray-50 p-4 gap-4">
-            {/* Back Button - reduced margin and padding */}
-            <Link to="/case" className="w-fit flex flex-row items-center gap-2 bg-gray-light border border-gray-dark rounded-md text-black-light px-3 py-1 sticky top-0 bg-gray-50 z-10 hover:text-black hover:bg-gray transition-colors duration-150">
-                <IoMdArrowBack className="rotate-270" />
-                <span>Back</span>
-            </Link>
+        <AnimatedContainer>
+            <div className="w-full h-screen flex flex-col bg-gray-50 p-4 gap-4">
+                {/* Back Button - reduced margin and padding */}
+                <Link to="/case" className="w-fit flex flex-row items-center gap-2 bg-gray-light border border-gray-dark rounded-md text-black-light px-3 py-1 sticky top-0 bg-gray-50 z-10 hover:text-black hover:bg-gray transition-colors duration-150">
+                    <IoMdArrowBack className="rotate-270" />
+                    <span>Back</span>
+                </Link>
 
-            {/* Top Section - Client Details - text aligned left */}
-            <div className="bg-white rounded-xl p-6">
-                <h2 className="text-2xl font-600 text-black mb-4 text-left">
-                    {clientDetails.name}
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Email:</p>
-                        <p className="text-left text-lg">{clientDetails.email}</p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Phone:</p>
-                        <p className="text-left text-lg">{clientDetails.phone}</p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Tax ID:</p>
-                        <p className="text-left text-lg">{clientDetails.taxId}</p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Address:</p>
-                        <p className="text-left text-lg">{clientDetails.address}</p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Filing Status:</p>
-                        <p className="text-left text-lg">{clientDetails.filingStatus}</p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Status:</p>
-                        <p className="font-500 text-left inline-block px-3 py-1 rounded-full bg-yellow text-white text-base">
-                            {clientDetails.caseStatus}
-                        </p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Occupation:</p>
-                        <p className="text-left text-lg">{clientDetails.occupation}</p>
-                    </div>
-                    <div className="space-y-1 text-left">
-                        <p className="text-black-light text-sm">Employer:</p>
-                        <p className="text-left text-lg">{clientDetails.employer}</p>
+                {/* Top Section - Client Details - text aligned left */}
+                <div className="bg-white rounded-xl p-6">
+                    <h2 className="text-2xl font-600 text-black mb-4 text-left">
+                        {clientDetails.name}
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Email:</p>
+                            <p className="text-left text-lg">{clientDetails.email}</p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Phone:</p>
+                            <p className="text-left text-lg">{clientDetails.phone}</p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Tax ID:</p>
+                            <p className="text-left text-lg">{clientDetails.taxId}</p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Address:</p>
+                            <p className="text-left text-lg">{clientDetails.address}</p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Filing Status:</p>
+                            <p className="text-left text-lg">{clientDetails.filingStatus}</p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Status:</p>
+                            <p className="font-500 text-left inline-block px-3 py-1 rounded-full bg-yellow text-white text-base">
+                                {clientDetails.caseStatus}
+                            </p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Occupation:</p>
+                            <p className="text-left text-lg">{clientDetails.occupation}</p>
+                        </div>
+                        <div className="space-y-1 text-left">
+                            <p className="text-black-light text-sm">Employer:</p>
+                            <p className="text-left text-lg">{clientDetails.employer}</p>
+                        </div>
                     </div>
                 </div>
+
+                {/* Bottom Section - Navigation Tabs and Content */}
+                <div className="flex-1 flex flex-col pb-16">
+                    {/* Navigation Tabs */}
+                    <div className="flex border-b border-gray mb-4 gap-6 text-lg">
+                        <button 
+                            className={`px-6 py-3 font-500 ${activeTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
+                            onClick={() => setActiveTab('upload')}
+                        >
+                            Upload Files
+                        </button>
+                        <button 
+                            className={`px-6 py-3 font-500 ${activeTab === 'binder' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
+                            onClick={() => setActiveTab('binder')}
+                        >
+                            Binder
+                        </button>
+                        <button 
+                            className={`px-6 py-3 font-500 ${activeTab === 'deliverables' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
+                            onClick={() => setActiveTab('deliverables')}
+                        >
+                            Deliverables
+                        </button>
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="flex-1 overflow-y-auto">
+                        {renderTabContent()}
+                    </div>
+                </div>
+
+                {/* PDF Viewer */}
+                <PDFViewer 
+                    fileUrl={fileUrl}
+                    pdfTitle={pdfTitle}
+                    pdfViewer={pdfViewer}
+                    setPdfViewer={setPdfViewer}
+                    document={currentDocument}
+                />
+                
             </div>
-
-            {/* Bottom Section - Navigation Tabs and Content */}
-            <div className="flex-1 flex flex-col pb-16">
-                {/* Navigation Tabs */}
-                <div className="flex border-b border-gray mb-4 gap-6 text-lg">
-                    <button 
-                        className={`px-6 py-3 font-500 ${activeTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
-                        onClick={() => setActiveTab('upload')}
-                    >
-                        Upload Files
-                    </button>
-                    <button 
-                        className={`px-6 py-3 font-500 ${activeTab === 'binder' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
-                        onClick={() => setActiveTab('binder')}
-                    >
-                        Binder
-                    </button>
-                    <button 
-                        className={`px-6 py-3 font-500 ${activeTab === 'deliverables' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
-                        onClick={() => setActiveTab('deliverables')}
-                    >
-                        Deliverables
-                    </button>
-                </div>
-
-                {/* Tab Content */}
-                <div className="flex-1 overflow-y-auto">
-                    {renderTabContent()}
-                </div>
-            </div>
-
-            {/* PDF Viewer */}
-            <PDFViewer 
-                fileUrl={fileUrl}
-                pdfTitle={pdfTitle}
-                pdfViewer={pdfViewer}
-                setPdfViewer={setPdfViewer}
-                document={currentDocument}
-            />
-            
-        </div>
+        </AnimatedContainer>
     );
 };
 

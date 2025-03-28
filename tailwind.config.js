@@ -36,7 +36,7 @@ export default {
       "700": "700",
     },
     fontSize: {
-      "sm": "12px",
+      "sm": "11px",
       "base": "13px",
       "lg": "15px",
       "xl": "16px",
@@ -61,10 +61,20 @@ export default {
         slideUp: {
           '0%': { transform: 'translateY(20px)', opacity: 0 },
           '100%': { transform: 'translateY(0)', opacity: 1 },
+        },
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+        fadeOut: {
+          '0%': { opacity: 1 },
+          '100%': { opacity: 0 },
         }
       },
       animation: {
         slideUp: 'slideUp 0.3s ease-out forwards',
+        fadeIn: 'fadeIn 0.2s ease-out forwards',
+        fadeOut: 'fadeOut 0.2s ease-out forwards',
       }
     }
   },

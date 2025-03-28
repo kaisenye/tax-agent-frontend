@@ -1,11 +1,20 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { LuFileSearch, LuUser, LuSettings } from "react-icons/lu";
 import { GrDocumentText, GrStorage } from "react-icons/gr";
 import logo from '../assets/logo.svg';
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState<string>(window.location.pathname.slice(1) || 'research');
+  const location = useLocation();
+
+  useEffect(() => {
+    // Extract the path from the current location (removes leading slash and gets the base route)
+    const path = location.pathname.slice(1).split('/')[0];
+    
+    // If path is empty, default to 'research' otherwise set to the current path
+    setActiveLink(path || 'research');
+  }, [location.pathname]);
 
   const navLinks = [
     { id: 'research', icon: LuFileSearch, label: 'Research' },

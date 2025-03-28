@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import AnimatedContainer from '../components/AnimatedContainer';
 
 // Icons
 import { FaArrowUp } from "react-icons/fa";
@@ -94,10 +95,11 @@ const Research = () => {
     }, [isTyping, scrollToBottom]);
 
     return (
-        <div className="w-full h-screen flex flex-col bg-transparent">
-            <div className="flex flex-row h-full bg-transparent pl-16">
-                {/* Main chat container */}
-                <div className="flex-1 flex flex-col bg-transparent">
+        <AnimatedContainer>
+            <div className="w-full h-screen flex flex-col bg-transparent">
+                <div className="flex flex-row h-full bg-transparent pl-16">
+                    {/* Main chat container */}
+                    <div className="flex-1 flex flex-col bg-transparent">
                     {/* Title section - only show when no messages */}
                     {showInitialContent && (
                         <div className="pb-32 pt-12">
@@ -277,8 +279,9 @@ const Research = () => {
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
-        </div>
+        </AnimatedContainer>
     );
 };
 
