@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5173, // Change this to a different port (5173 is Vite's default)
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5000/',
+        target: 'http://172.16.37.25:5001',
         changeOrigin: true,
         secure: false,
         timeout: 60000, // Increased timeout for large file uploads

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import AnimatedContainer from '../components/AnimatedContainer';
-import { Link } from 'react-router-dom';
+import AnimatedContainer from '../components/Containers/AnimatedContainer';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import PDFViewer from '../components/PDFViewer/PDFViewerPro';
+import { useAuth } from "../context/AuthContext"; // Import useAuth hook
 
 import { IoMdArrowBack } from "react-icons/io";
 import { TbDownload } from "react-icons/tb";
@@ -11,8 +12,52 @@ import FileUpload from '../components/FileUpload';
 import * as documentAPI from '../api/documentAPI';
 import * as s3API from '../aws/s3API';
 import { DocumentItem } from '../types/document.types';
+import { getCaseDetails, deleteCase } from '../api/caseAPI';
+import { Case } from '../types/case.types';
 
 const CaseDetail = () => {
+    // Get userId from AuthContext
+    const { userId, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    
+    // Get case ID from URL params
+    const { caseId } = useParams<{ caseId: string }>();
+    
+    // Case data state
+    const [caseData, setCaseData] = useState<Case | null>(null);
+    const [caseLoading, setCaseLoading] = useState<boolean>(true);
+    const [caseError, setCaseError] = useState<string | null>(null);
+    
+    // Redirect if not authenticated
+    useEffect(() => {
+        if (!isAuthenticated && !userId) {
+            navigate('/login', { replace: true });
+        }
+    }, [isAuthenticated, userId, navigate]);
+    
+    // Fetch case details
+    useEffect(() => {
+        const fetchCaseDetails = async () => {
+            if (!caseId) return;
+            
+            try {
+                setCaseLoading(true);
+                const fetchedCase = await getCaseDetails(caseId);
+                setCaseData(fetchedCase);
+                setCaseError(null);
+            } catch (err) {
+                console.error('Error fetching case details:', err);
+                setCaseError('Failed to load case details');
+            } finally {
+                setCaseLoading(false);
+            }
+        };
+        
+        if (caseId && userId) {
+            fetchCaseDetails();
+        }
+    }, [caseId, userId]);
+    
     // PDF Viewer State
     const [pdfTitle, setPdfTitle] = useState<string>("");
     const [pdfViewer, setPdfViewer] = useState<boolean>(false);
@@ -102,19 +147,6 @@ const CaseDetail = () => {
         { id: 9, name: "Form 8829", status: "pending", modifiedDate: "2024-03-08" },
         { id: 10, name: "Form 2106", status: "pending", modifiedDate: "2024-03-09" },
     ];
-
-    // Add mock client data
-    const clientDetails = {
-        name: "John Doe",
-        email: "john.doe@email.com",
-        phone: "(555) 123-4567",
-        taxId: "XXX-XX-1234",
-        caseStatus: "In Progress",
-        address: "123 Main Street, Anytown, CA 94001",
-        filingStatus: "Married filing jointly",
-        occupation: "Software Engineer",
-        employer: "Tech Solutions Inc."
-    };
 
     const renderTabContent = () => {
         switch(activeTab) {
@@ -292,45 +324,65 @@ const CaseDetail = () => {
 
                 {/* Top Section - Client Details - text aligned left */}
                 <div className="bg-white rounded-xl p-6">
-                    <h2 className="text-2xl font-600 text-black mb-4 text-left">
-                        {clientDetails.name}
-                    </h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Email:</p>
-                            <p className="text-left text-lg">{clientDetails.email}</p>
+                    {caseLoading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <p className="text-lg">Loading case details...</p>
                         </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Phone:</p>
-                            <p className="text-left text-lg">{clientDetails.phone}</p>
+                    ) : caseError ? (
+                        <div className="text-center py-4">
+                            <p className="text-red-500">{caseError}</p>
                         </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Tax ID:</p>
-                            <p className="text-left text-lg">{clientDetails.taxId}</p>
+                    ) : caseData ? (
+                        <>
+                            <h2 className="text-2xl font-600 text-black mb-4 text-left">
+                                {caseData.title}
+                            </h2>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Client Name:</p>
+                                    <p className="text-left text-lg">{caseData.clientName || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Email:</p>
+                                    <p className="text-left text-lg">{caseData.clientEmail || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Phone:</p>
+                                    <p className="text-left text-lg">{caseData.clientPhone || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Tax ID:</p>
+                                    <p className="text-left text-lg">{caseData.ssn || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Address:</p>
+                                    <p className="text-left text-lg">{caseData.clientAddress || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Filing Status:</p>
+                                    <p className="text-left text-lg">{caseData.filingStatus || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Occupation:</p>
+                                    <p className="text-left text-lg">{caseData.occupation || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Description:</p>
+                                    <p className="text-left text-lg">{caseData.description || "Not provided"}</p>
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <p className="text-black-light text-sm">Status:</p>
+                                    <p className="font-500 text-left inline-block px-3 py-1 rounded-full bg-yellow text-white text-base">
+                                        {caseData.status}
+                                    </p>
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="text-center py-4">
+                            <p className="text-lg text-gray-dark">No case found</p>
                         </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Address:</p>
-                            <p className="text-left text-lg">{clientDetails.address}</p>
-                        </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Filing Status:</p>
-                            <p className="text-left text-lg">{clientDetails.filingStatus}</p>
-                        </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Status:</p>
-                            <p className="font-500 text-left inline-block px-3 py-1 rounded-full bg-yellow text-white text-base">
-                                {clientDetails.caseStatus}
-                            </p>
-                        </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Occupation:</p>
-                            <p className="text-left text-lg">{clientDetails.occupation}</p>
-                        </div>
-                        <div className="space-y-1 text-left">
-                            <p className="text-black-light text-sm">Employer:</p>
-                            <p className="text-left text-lg">{clientDetails.employer}</p>
-                        </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Bottom Section - Navigation Tabs and Content */}

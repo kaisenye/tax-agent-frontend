@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import AnimatedContainer from '../components/AnimatedContainer';
+import AnimatedContainer from '../components/Containers/AnimatedContainer';
 
 // Icons
 import { FaArrowUp } from "react-icons/fa";

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LuFileSearch, LuUser, LuSettings } from "react-icons/lu";
+import { LuFileSearch, LuSettings } from "react-icons/lu";
 import { GrDocumentText, GrStorage } from "react-icons/gr";
 import logo from '../assets/logo.svg';
+import UserProfile from './UserProfile';
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState<string>(window.location.pathname.slice(1) || 'research');
@@ -68,14 +69,7 @@ const Navbar = () => {
 
       {/* User Section  */}
       <div className="flex flex-col gap-2 pt-4 pb-4 border-t border-gray">
-        <div className="flex flex-row items-center gap-3 bg-gray rounded-md p-2 border border-gray-dark">
-            <div className="w-6 h-6 bg-gray-light rounded-full flex items-center justify-center">
-                <LuUser className="w-4 h-4" />
-            </div>
-            <span className="text-lg font-500 text-black-light">
-                Joe Doe
-            </span>
-        </div>
+        <UserProfile />
         {navLinks.slice(-1).map(({ id, icon: Icon, label }) => (
           <Link 
             key={id}
