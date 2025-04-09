@@ -9,11 +9,80 @@ import { TbDownload } from "react-icons/tb";
 import { RxPencil2 } from "react-icons/rx";
 
 import FileUpload from '../components/FileUpload';
-import * as documentAPI from '../api/documentAPI';
-import * as s3API from '../aws/s3API';
+// Removed document and s3 API imports
 import { DocumentItem } from '../types/document.types';
-import { getCaseDetails, deleteCase } from '../api/caseAPI';
+import { getCaseDetails } from '../api/caseAPI';
 import { Case } from '../types/case.types';
+import { getAllFiles } from '../api/fileAPI';
+import { FileRecord } from '../types/file.types';
+
+// Mock data for documents
+const mockDocuments: DocumentItem[] = [
+  {
+    id: "1",
+    content: "Sample content for W2",
+    name: "W2 Form 2023",
+    original_file_path: "documents/w2_2023.pdf",
+    page_location: "page1",
+    precompute_tax_relevant_info: "Income: $75,000, Federal Tax: $12,000",
+    tags: ["Income", "Tax Form"],
+    category: "Income"
+  },
+  {
+    id: "2",
+    content: "Sample content for property tax",
+    name: "Property Tax Bill 2023",
+    original_file_path: "documents/property_tax_2023.pdf",
+    page_location: "page1",
+    precompute_tax_relevant_info: "Property Tax: $3,500",
+    tags: ["Property Tax Bill", "Deductions"],
+    category: "Schedule A: Itemized Deductions"
+  },
+  {
+    id: "3",
+    content: "Sample content for investment statement",
+    name: "Investment Statement Q4 2023",
+    original_file_path: "documents/investment_q4_2023.pdf",
+    page_location: "page1",
+    precompute_tax_relevant_info: "Capital Gains: $2,500, Dividends: $800",
+    tags: ["Investments", "Capital Gains"],
+    category: "Investments"
+  },
+  {
+    id: "4",
+    content: "Sample content for business expense",
+    name: "Business Expenses 2023",
+    original_file_path: "documents/business_expenses_2023.pdf",
+    page_location: "page1",
+    precompute_tax_relevant_info: "Office Supplies: $1,200, Travel: $3,500",
+    tags: ["Business", "Expenses"],
+    category: "Business"
+  },
+  {
+    id: "5",
+    content: "Sample content for charitable donations",
+    name: "Charitable Donations 2023",
+    original_file_path: "documents/charitable_2023.pdf",
+    page_location: "page1",
+    precompute_tax_relevant_info: "Total Donations: $2,000",
+    tags: ["Financial", "Deductions"],
+    category: "Financial"
+  }
+];
+
+// Mock data for deliverables only
+const deliverables = [
+    { id: 1, name: "Form 1040", status: "pending", modifiedDate: "2024-03-01" },
+    { id: 2, name: "Schedule A", status: "pending", modifiedDate: "2024-03-02" },
+    { id: 3, name: "Schedule B", status: "completed", modifiedDate: "2024-03-03" },
+    { id: 4, name: "Schedule C", status: "pending", modifiedDate: "2024-03-04" },
+    { id: 5, name: "Schedule D", status: "completed", modifiedDate: "2024-03-05" },
+    { id: 6, name: "Schedule E", status: "pending", modifiedDate: "2024-03-06" },
+    { id: 7, name: "Form 8949", status: "pending", modifiedDate: "2024-03-06" },
+    { id: 8, name: "Form 4562", status: "completed", modifiedDate: "2024-03-07" },
+    { id: 9, name: "Form 8829", status: "pending", modifiedDate: "2024-03-08" },
+    { id: 10, name: "Form 2106", status: "pending", modifiedDate: "2024-03-09" },
+];
 
 const CaseDetail = () => {
     // Get userId from AuthContext
@@ -39,7 +108,6 @@ const CaseDetail = () => {
     useEffect(() => {
         const fetchCaseDetails = async () => {
             if (!caseId) return;
-            
             try {
                 setCaseLoading(true);
                 const fetchedCase = await getCaseDetails(caseId);
@@ -52,6 +120,7 @@ const CaseDetail = () => {
                 setCaseLoading(false);
             }
         };
+        console.log('Fetching case details for case ID:', caseId);
         
         if (caseId && userId) {
             fetchCaseDetails();
@@ -63,26 +132,32 @@ const CaseDetail = () => {
     const [pdfViewer, setPdfViewer] = useState<boolean>(false);
     const [currentDocument, setCurrentDocument] = useState<DocumentItem | null>(null);
     const [fileUrl, setFileUrl] = useState<string>("");
-    const [activeTab, setActiveTab] = useState<'upload' | 'binder' | 'deliverables'>('upload');
+    const [activeTab, setActiveTab] = useState<'upload' | 'binder' | 'deliverables' | 'original'>('upload');
     
-    // Document state from DynamoDB
+    // Document state - using mock data instead of DynamoDB
     const [documents, setDocuments] = useState<DocumentItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); 
     
-    // Fetch documents from DynamoDB
+    // Original files state
+    const [originalFiles, setOriginalFiles] = useState<FileRecord[]>([]);
+    const [originalFilesLoading, setOriginalFilesLoading] = useState<boolean>(true);
+    const [originalFilesError, setOriginalFilesError] = useState<string | null>(null);
+    
+    // Fetch documents from mock data instead of DynamoDB
     useEffect(() => {
         const fetchDocuments = async () => {
             try {
                 setLoading(true);
-                // Get all documents
-                const docs = await documentAPI.getAllDocuments();
-                setDocuments(docs);
-                setError(null);
+                // Simulate API delay
+                setTimeout(() => {
+                    setDocuments(mockDocuments);
+                    setError(null);
+                    setLoading(false);
+                }, 500);
             } catch (err) {
                 console.error('Error fetching documents:', err);
-                setError('Failed to load documents from database');
-            } finally {
+                setError('Failed to load documents');
                 setLoading(false);
             }
         };
@@ -92,61 +167,61 @@ const CaseDetail = () => {
         }
     }, [activeTab]);
     
-    // Get signed URL from S3 when document changes
+    // Fetch original files
     useEffect(() => {
-        const getSignedUrl = async () => {
-            if (currentDocument && currentDocument.original_file_path) {
-                try {
-                    // Extract bucket name and key from the original_file_path
-                    // Assuming format like: uploads/bucket-name/key-path
-                    const path = currentDocument.original_file_path;
-                    
-                    // Use the original_file_path as the key
-                    const url = await s3API.getDocumentSignedUrl(path, 3600);
-
-                    console.log('Generated signed URL for document:', {
-                        key: path,
-                        url: url.substring(0, 100) + '...' // Log truncated URL for security
-                    });
-                    
-                    setFileUrl(url);
-                } catch (err) {
-                    console.error('Error generating signed URL:', err);
-                    // Fallback to a default PDF for demonstration
-                    setFileUrl("https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf");
-                }
-            } else {
-                // Default PDF for deliverables or when no document is selected
-                setFileUrl("https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf");
+        const fetchOriginalFiles = async () => {
+            if (!caseId) return;
+            
+            try {
+                setOriginalFilesLoading(true);
+                const files = await getAllFiles(caseId);
+                setOriginalFiles(files);
+                setOriginalFilesError(null);
+            } catch (err) {
+                console.error('Error fetching original files:', err);
+                setOriginalFilesError('Failed to load original files');
+            } finally {
+                setOriginalFilesLoading(false);
             }
         };
         
-        getSignedUrl();
-    }, [currentDocument]);
+        if (activeTab === 'original' && caseId) {
+            fetchOriginalFiles();
+        }
+    }, [activeTab, caseId]);
+    
+    // Set file URL directly instead of getting signed URL from S3
+    useEffect(() => {
+        if (currentDocument) {
+            // Use a default PDF URL for all documents
+            setFileUrl("https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf");
+        } else if (activeTab === 'original' && originalFiles.length > 0) {
+            // If we're in the original files tab and have files, use the first file's signed URL
+            setFileUrl(originalFiles[0].signed_url);
+        } else {
+            // Default PDF for deliverables or when no document is selected
+            setFileUrl("https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf");
+        }
+    }, [currentDocument, activeTab, originalFiles]);
     
     const handleOpenPDFViewer = (title: string, document?: DocumentItem) => {
         setPdfTitle(title);
         setCurrentDocument(document || null);
+        
+        // If we're in the original files tab, find the file by name and use its signed URL
+        if (activeTab === 'original' && !document) {
+            const file = originalFiles.find(f => f.file_name === title);
+            if (file && file.signed_url) {
+                setFileUrl(file.signed_url);
+            }
+        }
+        
         setPdfViewer(true);
     }
     
     const handleOpenDocumentDetail = (doc: DocumentItem) => {
         handleOpenPDFViewer(doc.name, doc);
     }
-
-    // Mock data for deliverables only
-    const deliverables = [
-        { id: 1, name: "Form 1040", status: "pending", modifiedDate: "2024-03-01" },
-        { id: 2, name: "Schedule A", status: "pending", modifiedDate: "2024-03-02" },
-        { id: 3, name: "Schedule B", status: "completed", modifiedDate: "2024-03-03" },
-        { id: 4, name: "Schedule C", status: "pending", modifiedDate: "2024-03-04" },
-        { id: 5, name: "Schedule D", status: "completed", modifiedDate: "2024-03-05" },
-        { id: 6, name: "Schedule E", status: "pending", modifiedDate: "2024-03-06" },
-        { id: 7, name: "Form 8949", status: "pending", modifiedDate: "2024-03-06" },
-        { id: 8, name: "Form 4562", status: "completed", modifiedDate: "2024-03-07" },
-        { id: 9, name: "Form 8829", status: "pending", modifiedDate: "2024-03-08" },
-        { id: 10, name: "Form 2106", status: "pending", modifiedDate: "2024-03-09" },
-    ];
 
     const renderTabContent = () => {
         switch(activeTab) {
@@ -308,6 +383,79 @@ const CaseDetail = () => {
                         </div>
                     </div>
                 );
+            case 'original':
+                return (
+                    <div className="bg-white rounded-xl p-6">
+                        {originalFilesLoading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <p className="text-lg text-black-light">Loading original files...</p>
+                            </div>
+                        ) : originalFilesError ? (
+                            <div className="text-center py-4">
+                                <p className="text-red-500">{originalFilesError}</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-hidden rounded-lg">
+                                {/* Table Header - Using the same padding as rows and exact same structure */}
+                                <div className="grid grid-cols-12 px-2 py-2 bg-gray-light text-black-light text-lg font-500">
+                                    <div className="col-span-6 pl-2 text-left">File Name</div>
+                                    <div className="col-span-3 text-left">File ID</div>
+                                    <div className="col-span-2 text-left">Status</div>
+                                    <div className="col-span-1 text-right pr-1">Actions</div>
+                                </div>
+                                
+                                {/* Table Body */}
+                                <div>
+                                    {originalFiles.map((file, index) => (
+                                        <div 
+                                            key={file.file_id} 
+                                            className={`grid grid-cols-12 px-3 py-3 cursor-pointer hover:bg-gray-light-light items-center transition-all duration-150 ${index !== originalFiles.length - 1 ? 'border-b border-gray' : ''}`}
+                                            onClick={() => handleOpenPDFViewer(file.file_name, undefined)}
+                                        >
+                                            <div className="col-span-6 font-400 text-black flex items-center text-left">
+                                                <svg className="w-4 h-4 text-black-light mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <span className="truncate text-lg">{file.file_name}</span>
+                                            </div>
+                                            
+                                            <div className="col-span-3 flex items-center text-left">
+                                                <span className="text-black-light text-base truncate">{file.file_id}</span>
+                                            </div>
+                                            
+                                            <div className="col-span-2 flex items-center text-left">
+                                                <div className="flex items-center text-left bg-gray-light-light border border-gray rounded-md px-2 py-1">
+                                                    <span 
+                                                        className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 
+                                                        ${file.status === 'uploaded' ? 'bg-green' : 
+                                                         file.status === 'processing' ? 'bg-yellow' : 
+                                                         file.status === 'error' ? 'bg-red' : 'bg-gray'}`}
+                                                    />
+                                                    <span className="text-black-light text-base capitalize">{file.status || 'Unknown'}</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="col-span-1 flex justify-end">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Open the file in a new tab using the signed URL
+                                                        if (file.signed_url) {
+                                                            window.open(file.signed_url, '_blank');
+                                                        }
+                                                    }}
+                                                    className="p-1 text-black-light hover:text-black hover:bg-gray-200 rounded transition-colors duration-150"
+                                                >
+                                                    <TbDownload size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
             default:
                 return null;
         }
@@ -394,6 +542,12 @@ const CaseDetail = () => {
                             onClick={() => setActiveTab('upload')}
                         >
                             Upload Files
+                        </button>
+                        <button 
+                            className={`px-6 py-3 font-500 ${activeTab === 'original' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
+                            onClick={() => setActiveTab('original')}
+                        >
+                            Original Files
                         </button>
                         <button 
                             className={`px-6 py-3 font-500 ${activeTab === 'binder' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}

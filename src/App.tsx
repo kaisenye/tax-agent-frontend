@@ -17,17 +17,6 @@ import Login from './pages/Auth/Login'
 import { AuthProvider } from './context/AuthContext'
 
 function App() {
-  // const [initialState, setState] = useState([])
-  // const url = "http://localhost:5001/api"
-
-  // useEffect(()=> {
-  //   fetch(url).then(response => {
-  //     if(response.status == 200){
-  //       return response.json()
-  //     }
-  //   }).then(data => setState(data))
-  // }, [])
-
   return (
     <AuthProvider>
       <Router>
@@ -40,7 +29,7 @@ function App() {
             <Route element={<ProtectedLayout />}>
               <Route path="/research" element={<Research />} />
               <Route path="/case" element={<CaseList />} />
-              <Route path="/case/:id" element={<CaseDetail />} />
+              <Route path="/case/:caseId" element={<CaseDetail />} />
               <Route path="/chat/:sessionId" element={<ClientChatSession />} />
               <Route path="/settings" element={<div>Settings Page</div>} />
             </Route>

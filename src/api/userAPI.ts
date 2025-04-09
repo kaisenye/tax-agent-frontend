@@ -7,7 +7,7 @@ import httpClient from './httpClient';
  */
 export const validateUser = async (userId: string): Promise<any> => {
   try {
-    const response = await httpClient.get(`/api/users/profile`, {
+    const response = await httpClient.get(`/user/profile`, {
       params: { user_id: userId }
     });
     return response.data;

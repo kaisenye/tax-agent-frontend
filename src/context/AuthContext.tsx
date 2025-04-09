@@ -4,6 +4,7 @@ import { validateUser } from '../api/userAPI';
 // Define the shape of our auth context
 interface AuthContextType {
   userId: string | null;
+  userName: string | null;
   isAuthenticated: boolean;
   login: (userId: string) => Promise<boolean>;
   logout: () => void;
@@ -14,6 +15,7 @@ interface AuthContextType {
 // Create the context with a default value
 const AuthContext = createContext<AuthContextType>({
   userId: null,
+  userName: null,
   isAuthenticated: false,
   login: async () => false,
   logout: () => {},
@@ -30,6 +32,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (userData) {
             // User is valid, set authenticated state
             setUserId(storedUserId);
+            setUserName(userData.name);
             setIsAuthenticated(true);
           } else {
             // User not found, clear localStorage
@@ -104,7 +108,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Provide the auth context to the component tree
   return (
     <AuthContext.Provider value={{ 
-      userId, 
+      userId,
+      userName,
       isAuthenticated, 
       login, 
       logout, 

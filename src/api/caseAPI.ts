@@ -8,7 +8,7 @@ import { Case, CreateCaseRequest } from '../types/case.types';
  */
 export const createCase = async (caseData: CreateCaseRequest): Promise<Case> => {
   try {
-    const response = await httpClient.post('/api/cases/create', caseData);
+    const response = await httpClient.post('/cases/create', caseData);
     return response.data;
   } catch (error: any) {
     console.error('Error creating case:', error);
@@ -23,7 +23,7 @@ export const createCase = async (caseData: CreateCaseRequest): Promise<Case> => 
  */
 export const getUserCases = async (userId: string): Promise<Array<Case>> => {
   try {
-    const response = await httpClient.get('/api/cases/list', {
+    const response = await httpClient.get('/case/list_cases', {
       params: { user_id: userId }
     });
     return response.data;
@@ -40,9 +40,7 @@ export const getUserCases = async (userId: string): Promise<Array<Case>> => {
  */
 export const getCaseDetails = async (caseId: string): Promise<Case> => {
   try {
-    const response = await httpClient.get('/api/cases/case', {
-      params: { case_id: caseId }
-    });
+    const response = await httpClient.get(`/case/${caseId}`);
     return response.data;
   } catch (error: any) {
     console.error('Error getting case details:', error);
@@ -57,9 +55,7 @@ export const getCaseDetails = async (caseId: string): Promise<Case> => {
  */
 export const deleteCase = async (caseId: string): Promise<boolean> => {
   try {
-    const response = await httpClient.delete('/api/cases/delete', {
-      data: { case_id: caseId }
-    });
+    const response = await httpClient.delete(`/case/delete/${caseId}`);
     return true;
   } catch (error: any) {
     console.error('Error deleting case:', error);

@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
-  const { userId, logout } = useAuth();
+  const { userId, userName, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -18,7 +18,7 @@ const UserProfile = () => {
           <LuUser className="w-4 h-4" />
         </div>
         <span className="text-lg font-500 text-black-light">
-          {userId || 'Guest'}
+          {userName || 'Guest'}
         </span>
       </div>
       <button 
