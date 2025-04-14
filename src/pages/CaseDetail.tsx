@@ -14,7 +14,7 @@ import { DocumentItem } from '../types/document.types';
 import { getCaseDetails } from '../api/caseAPI';
 import { Case } from '../types/case.types';
 import { getAllFiles } from '../api/fileAPI';
-import { FileRecord } from '../types/file.types';
+import { FileRecord, FilePageContent } from '../types/file.types';
 
 // Mock data for documents
 const mockDocuments: DocumentItem[] = [
@@ -132,7 +132,8 @@ const CaseDetail = () => {
     const [pdfViewer, setPdfViewer] = useState<boolean>(false);
     const [currentDocument, setCurrentDocument] = useState<DocumentItem | null>(null);
     const [fileUrl, setFileUrl] = useState<string>("");
-    const [activeTab, setActiveTab] = useState<'upload' | 'binder' | 'deliverables' | 'original'>('upload');
+    const [activeTab, setActiveTab] = useState<'upload' | 'binder' | 'deliverables'>('upload');
+    const [currentFilePageContents, setCurrentFilePageContents] = useState<FilePageContent[] | undefined>(undefined);
     
     // Document state - using mock data instead of DynamoDB
     const [documents, setDocuments] = useState<DocumentItem[]>([]);
@@ -185,7 +186,7 @@ const CaseDetail = () => {
             }
         };
         
-        if (activeTab === 'original' && caseId) {
+        if (activeTab === 'binder' && caseId) {
             fetchOriginalFiles();
         }
     }, [activeTab, caseId]);
@@ -195,25 +196,45 @@ const CaseDetail = () => {
         if (currentDocument) {
             // Use a default PDF URL for all documents
             setFileUrl("https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf");
-        } else if (activeTab === 'original' && originalFiles.length > 0) {
+            setCurrentFilePageContents(undefined);
+        } else if (activeTab === 'binder' && originalFiles.length > 0) {
             // If we're in the original files tab and have files, use the first file's signed URL
             setFileUrl(originalFiles[0].signed_url);
+            
+            // Set file page contents if available
+            if (originalFiles[0].file_page_contents && originalFiles[0].file_page_contents.length > 0) {
+                setCurrentFilePageContents(originalFiles[0].file_page_contents);
+            } else {
+                setCurrentFilePageContents(undefined);
+            }
         } else {
             // Default PDF for deliverables or when no document is selected
             setFileUrl("https://tax-agent-assets.s3.us-east-1.amazonaws.com/w2_filled.pdf");
+            setCurrentFilePageContents(undefined);
         }
     }, [currentDocument, activeTab, originalFiles]);
     
-    const handleOpenPDFViewer = (title: string, document?: DocumentItem) => {
+    const handleOpenPDFViewer = (title: string, document?: DocumentItem, filePageContents?: FilePageContent[]) => {
         setPdfTitle(title);
         setCurrentDocument(document || null);
         
         // If we're in the original files tab, find the file by name and use its signed URL
-        if (activeTab === 'original' && !document) {
+        if (activeTab === 'binder' && !document) {
             const file = originalFiles.find(f => f.file_name === title);
-            if (file && file.signed_url) {
-                setFileUrl(file.signed_url);
+            if (file) {
+                if (file.signed_url) {
+                    setFileUrl(file.signed_url);
+                }
+                
+                // Set file page contents if available
+                if (file.file_page_contents && file.file_page_contents.length > 0) {
+                    setCurrentFilePageContents(file.file_page_contents);
+                } else {
+                    setCurrentFilePageContents(undefined);
+                }
             }
+        } else {
+            setCurrentFilePageContents(undefined);
         }
         
         setPdfViewer(true);
@@ -232,71 +253,77 @@ const CaseDetail = () => {
             case 'binder':
                 return (
                     <div className="bg-white rounded-xl p-6">
-                        {loading ? (
+                        {originalFilesLoading ? (
                             <div className="flex justify-center items-center h-64">
-                                <p className="text-lg text-black-light">Loading documents...</p>
+                                <p className="text-lg text-black-light">Loading files...</p>
                             </div>
-                        ) : error ? (
-                            <div className="flex justify-center items-center h-64 bg-red-50 rounded-lg">
-                                <p className="text-lg text-red-500">{error}</p>
+                        ) : originalFilesError ? (
+                            <div className="text-center py-4">
+                                <p className="text-red-500">{originalFilesError}</p>
                             </div>
                         ) : (
                             <div className="overflow-hidden rounded-lg">
                                 {/* Table Header - Using the same padding as rows and exact same structure */}
                                 <div className="grid grid-cols-12 px-2 py-2 bg-gray-light text-black-light text-lg font-500">
-                                    <div className="col-span-6 pl-2 text-left">File Name</div>
-                                    <div className="col-span-3 text-left">Belongs To</div>
-                                    <div className="col-span-2 text-left">Category</div>
+                                    <div className="col-span-8 pl-2 text-left">File Name</div>
+                                    <div className="col-span-3 text-left">Category</div>
                                     <div className="col-span-1 text-right pr-1">Actions</div>
                                 </div>
                                 
                                 {/* Table Body */}
                                 <div>
-                                    {documents.map((doc, index) => (
+                                    {originalFiles.map((file, index) => (
                                         <div 
-                                            key={doc.id} 
-                                            className={`grid grid-cols-12 px-3 py-3 cursor-pointer hover:bg-gray-light-light items-center transition-all duration-150 ${index !== documents.length - 1 ? 'border-b border-gray' : ''}`}
-                                            onClick={() => handleOpenDocumentDetail(doc)}
+                                            key={file.file_id} 
+                                            className={`grid grid-cols-12 px-3 py-3 cursor-pointer hover:bg-gray-light-light items-center transition-all duration-150 ${index !== originalFiles.length - 1 ? 'border-b border-gray' : ''}`}
+                                            onClick={() => handleOpenPDFViewer(file.file_name, undefined, file.file_page_contents)}
                                         >
-                                            <div className="col-span-6 font-400 text-black flex items-center text-left">
+                                            <div className="col-span-8 font-400 text-black flex items-center text-left">
                                                 <svg className="w-4 h-4 text-black-light mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
-                                                <span className="truncate text-lg">{doc.name}</span>
+                                                <span className="truncate text-lg">{file.file_name}</span>
                                             </div>
                                             
                                             <div className="col-span-3 flex items-center text-left">
                                                 <div className="flex items-center text-left bg-gray-light-light border border-gray rounded-md px-2 py-1">
-                                                    <span 
-                                                        className={`w-2 h-2 rounded-full mr-2 flex-shrink-0  
-                                                        ${doc.category === 'Schedule A: Itemized Deductions' ? 'bg-green' : 
-                                                         doc.category === 'Income' ? 'bg-blue' : 
-                                                         doc.category === 'Investments' ? 'bg-purple' : 
-                                                         doc.category === 'Financial' ? 'bg-yellow' : 
-                                                         doc.category === 'Business' ? 'bg-orange' : 
-                                                         doc.category === 'Expenses' ? 'bg-red' : 'bg-gray'}`}
-                                                    />
-                                                    <span className="text-black-light text-base truncate">{doc.category || 'Uncategorized'}</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="col-span-2 flex items-center text-left">
-                                                <div className="flex items-center text-left bg-gray-light-light border border-gray rounded-md px-2 py-1">
-                                                    <span 
-                                                        className={`w-2 h-2 rounded-full mr-2 flex-shrink-0  
-                                                        ${doc.tags.includes('Property Tax Bill') ? 'bg-blue' : 
-                                                         doc.tags.includes('Income') ? 'bg-blue' : 
-                                                         doc.tags.includes('Investments') ? 'bg-purple' : 
-                                                         doc.tags.includes('Financial') ? 'bg-yellow' : 
-                                                         doc.tags.includes('Business') ? 'bg-orange' : 
-                                                         doc.tags.includes('Expenses') ? 'bg-red' : 'bg-gray'}`}
-                                                    />
-                                                    <span className="text-black-light text-base truncate">{doc.tags.length > 0 ? doc.tags.join(', ') : 'No tags'}</span>
+                                                    {file.file_type_tag && file.file_type_tag.length > 0 ? (
+                                                        <>
+                                                            <span 
+                                                                className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 
+                                                                ${file.file_type_tag.includes('Mortgage_and_Property_Tax') ? 'bg-blue' : 
+                                                                 file.file_type_tag.includes('Income') ? 'bg-green' : 
+                                                                 file.file_type_tag.includes('Investments') ? 'bg-purple' : 
+                                                                 file.file_type_tag.includes('Financial') ? 'bg-yellow' : 
+                                                                 file.file_type_tag.includes('Business') ? 'bg-orange' : 
+                                                                 file.file_type_tag.includes('Expenses') ? 'bg-red' : 'bg-gray'}`}
+                                                            />
+                                                            <span className="text-black-light text-base truncate">
+                                                                {file.file_type_tag.join(', ')}
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className="w-2 h-2 rounded-full mr-2 flex-shrink-0 bg-gray" />
+                                                            <span className="text-black-light text-base truncate">Uncategorized</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                             
                                             <div className="col-span-1 flex justify-end">
-                                                ...
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Open the file in a new tab using the signed URL
+                                                        if (file.signed_url) {
+                                                            window.open(file.signed_url, '_blank');
+                                                        }
+                                                    }}
+                                                    className="p-1 text-black-light hover:text-black hover:bg-gray-200 rounded transition-colors duration-150"
+                                                >
+                                                    <TbDownload size={18} />
+                                                </button>
                                             </div>
                                         </div>
                                     ))}
@@ -383,79 +410,6 @@ const CaseDetail = () => {
                         </div>
                     </div>
                 );
-            case 'original':
-                return (
-                    <div className="bg-white rounded-xl p-6">
-                        {originalFilesLoading ? (
-                            <div className="flex justify-center items-center h-64">
-                                <p className="text-lg text-black-light">Loading original files...</p>
-                            </div>
-                        ) : originalFilesError ? (
-                            <div className="text-center py-4">
-                                <p className="text-red-500">{originalFilesError}</p>
-                            </div>
-                        ) : (
-                            <div className="overflow-hidden rounded-lg">
-                                {/* Table Header - Using the same padding as rows and exact same structure */}
-                                <div className="grid grid-cols-12 px-2 py-2 bg-gray-light text-black-light text-lg font-500">
-                                    <div className="col-span-6 pl-2 text-left">File Name</div>
-                                    <div className="col-span-3 text-left">File ID</div>
-                                    <div className="col-span-2 text-left">Status</div>
-                                    <div className="col-span-1 text-right pr-1">Actions</div>
-                                </div>
-                                
-                                {/* Table Body */}
-                                <div>
-                                    {originalFiles.map((file, index) => (
-                                        <div 
-                                            key={file.file_id} 
-                                            className={`grid grid-cols-12 px-3 py-3 cursor-pointer hover:bg-gray-light-light items-center transition-all duration-150 ${index !== originalFiles.length - 1 ? 'border-b border-gray' : ''}`}
-                                            onClick={() => handleOpenPDFViewer(file.file_name, undefined)}
-                                        >
-                                            <div className="col-span-6 font-400 text-black flex items-center text-left">
-                                                <svg className="w-4 h-4 text-black-light mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                                <span className="truncate text-lg">{file.file_name}</span>
-                                            </div>
-                                            
-                                            <div className="col-span-3 flex items-center text-left">
-                                                <span className="text-black-light text-base truncate">{file.file_id}</span>
-                                            </div>
-                                            
-                                            <div className="col-span-2 flex items-center text-left">
-                                                <div className="flex items-center text-left bg-gray-light-light border border-gray rounded-md px-2 py-1">
-                                                    <span 
-                                                        className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 
-                                                        ${file.status === 'uploaded' ? 'bg-green' : 
-                                                         file.status === 'processing' ? 'bg-yellow' : 
-                                                         file.status === 'error' ? 'bg-red' : 'bg-gray'}`}
-                                                    />
-                                                    <span className="text-black-light text-base capitalize">{file.status || 'Unknown'}</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="col-span-1 flex justify-end">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        // Open the file in a new tab using the signed URL
-                                                        if (file.signed_url) {
-                                                            window.open(file.signed_url, '_blank');
-                                                        }
-                                                    }}
-                                                    className="p-1 text-black-light hover:text-black hover:bg-gray-200 rounded transition-colors duration-150"
-                                                >
-                                                    <TbDownload size={18} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                );
             default:
                 return null;
         }
@@ -463,12 +417,23 @@ const CaseDetail = () => {
 
     return (
         <AnimatedContainer>
-            <div className="w-full h-screen flex flex-col bg-gray-50 p-4 gap-4">
-                {/* Back Button - reduced margin and padding */}
-                <Link to="/case" className="w-fit flex flex-row items-center gap-2 bg-gray-light border border-gray-dark rounded-md text-black-light px-3 py-1 sticky top-0 bg-gray-50 z-10 hover:text-black hover:bg-gray transition-colors duration-150">
-                    <IoMdArrowBack className="rotate-270" />
-                    <span>Back</span>
-                </Link>
+            <div className="w-full h-screen flex flex-col bg-gray-50 p-4">
+                <nav className="flex border-b border-gray pb-4" aria-label="Breadcrumb">
+                    <ol className="inline-flex items-center space-x-1 md:space-x-1">
+                        <li className="inline-flex items-center">
+                            <Link to="/case" className="inline-flex items-center text-base gap-2 font-medium text-black-light hover:text-black">
+                                <IoMdArrowBack className="w-4 h-4"/>
+                                Cases
+                            </Link>
+                        </li>
+                        <li>
+                            <div className="flex items-center">
+                                <span className="mx-2 text-gray-400">/</span>
+                                <span className="text-base font-medium text-gray-500">{caseData?.title}</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
 
                 {/* Top Section - Client Details - text aligned left */}
                 <div className="bg-white rounded-xl p-6">
@@ -544,12 +509,6 @@ const CaseDetail = () => {
                             Upload Files
                         </button>
                         <button 
-                            className={`px-6 py-3 font-500 ${activeTab === 'original' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
-                            onClick={() => setActiveTab('original')}
-                        >
-                            Original Files
-                        </button>
-                        <button 
                             className={`px-6 py-3 font-500 ${activeTab === 'binder' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black-light'}`}
                             onClick={() => setActiveTab('binder')}
                         >
@@ -576,6 +535,7 @@ const CaseDetail = () => {
                     pdfViewer={pdfViewer}
                     setPdfViewer={setPdfViewer}
                     document={currentDocument}
+                    filePageContents={currentFilePageContents}
                 />
                 
             </div>

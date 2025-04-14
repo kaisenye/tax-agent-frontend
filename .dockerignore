@@ -1,6 +1,0 @@
-node_modules
-npm-debug.log
-
-# Ignore any build artifacts (e.g., dist or build directories)
-build/
-dist/
