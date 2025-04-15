@@ -38,7 +38,7 @@ export default {
     fontSize: {
       "sm": "11px",
       "base": "13px",
-      "lg": "15px",
+      "lg": "14px",
       "xl": "16px",
       "2xl": "18px",
       "3xl": "24px",

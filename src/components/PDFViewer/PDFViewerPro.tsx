@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './PDFViewerElement'; // Import the web component
 import { DocumentItem } from '../../types/document.types';
 import { FilePageContent } from '../../types/file.types';
+import { getLabelColor } from '../../types/label.types';
 
 interface PDFViewerProps {
     fileUrl: string;
@@ -39,18 +40,6 @@ const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer, document, fileP
             console.error("Error parsing tax info:", error);
             return null;
         }
-    };
-    
-    const getTagColor = (tag: any): string => {
-        if (typeof tag === 'string') {
-            if (tag.includes('Mortgage_and_Property_Tax')) return 'bg-blue';
-            if (tag.includes('Income')) return 'bg-green';
-            if (tag.includes('Investments')) return 'bg-purple';
-            if (tag.includes('Financial')) return 'bg-yellow';
-            if (tag.includes('Business')) return 'bg-orange';
-            if (tag.includes('Expenses')) return 'bg-red';
-        }
-        return 'bg-gray';
     };
     
     return (
@@ -103,21 +92,27 @@ const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer, document, fileP
                                                 {/* Category */}
                                                 <div className="flex flex-col items-start mb-8">
                                                     <p className="text-base font-500 text-gray-600 mb-2 text-left">Category</p>
-                                                    <div className="flex items-center mb-4 border border-gray rounded-lg px-2 py-1">
+                                                    <div className="flex flex-wrap gap-1 mb-4">
                                                         {page.file_type_tag.length > 0 ? (
-                                                            <span 
-                                                                className={`w-2 h-2 rounded-full mr-2 ${getTagColor(page.file_type_tag[0].label)}`}
-                                                            />
+                                                            page.file_type_tag.map((tagItem, index) => (
+                                                                <div 
+                                                                    key={index} 
+                                                                    className={`flex items-center px-2 py-1 rounded-full text-xs text-white ${getLabelColor(tagItem.label)}`}
+                                                                >
+                                                                    <span className="w-2 h-2 rounded-full mr-1 bg-white opacity-70"></span>
+                                                                    {tagItem.label}
+                                                                </div>
+                                                            ))
                                                         ) : (
-                                                            <span className="w-2 h-2 rounded-full mr-2 bg-gray-500" />
+                                                            <div className="flex items-center px-2 py-1 rounded-full text-xs text-white bg-gray-500">
+                                                                <span className="w-2 h-2 rounded-full mr-1 bg-white opacity-70"></span>
+                                                                Uncategorized
+                                                            </div>
                                                         )}
-                                                        <span className="text-base text-left">
-                                                            {page.file_type_tag[0].label}
-                                                        </span>
                                                     </div>
                                                     <p className="text-base font-500 text-gray-600 mb-2 text-left">Reason</p>
                                                     <span className="text-base text-left text-black-light">
-                                                        {page.file_type_tag[0].reason}
+                                                        {page.file_type_tag.length > 0 ? page.file_type_tag[0].reason : "No reason provided"}
                                                     </span>
                                                 </div>
                                                 
@@ -160,7 +155,7 @@ const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer, document, fileP
                                                                 document.tags.map((tag, index) => (
                                                                     <span 
                                                                         key={index}
-                                                                        className={`w-3 h-3 rounded-full mr-3 ${getTagColor(tag)}`}
+                                                                        className={`w-3 h-3 rounded-full mr-3 ${getLabelColor(tag)}`}
                                                                     />
                                                                 ))
                                                             ) : (

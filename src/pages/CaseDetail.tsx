@@ -15,6 +15,7 @@ import { getCaseDetails } from '../api/caseAPI';
 import { Case } from '../types/case.types';
 import { getAllFiles } from '../api/fileAPI';
 import { FileRecord, FilePageContent } from '../types/file.types';
+import { getLabelColor } from '../types/label.types';
 
 // Mock data for documents
 const mockDocuments: DocumentItem[] = [
@@ -265,9 +266,9 @@ const CaseDetail = () => {
                             <div className="overflow-hidden rounded-lg">
                                 {/* Table Header - Using the same padding as rows and exact same structure */}
                                 <div className="grid grid-cols-12 px-2 py-2 bg-gray-light text-black-light text-lg font-500">
-                                    <div className="col-span-8 pl-2 text-left">File Name</div>
-                                    <div className="col-span-3 text-left">Category</div>
-                                    <div className="col-span-1 text-right pr-1">Actions</div>
+                                    <div className="col-span-5 pl-2 text-left">File Name</div>
+                                    <div className="col-span-5 text-left">Category</div>
+                                    <div className="col-span-2 text-right pr-1">Actions</div>
                                 </div>
                                 
                                 {/* Table Body */}
@@ -278,40 +279,37 @@ const CaseDetail = () => {
                                             className={`grid grid-cols-12 px-3 py-3 cursor-pointer hover:bg-gray-light-light items-center transition-all duration-150 ${index !== originalFiles.length - 1 ? 'border-b border-gray' : ''}`}
                                             onClick={() => handleOpenPDFViewer(file.file_name, undefined, file.file_page_contents)}
                                         >
-                                            <div className="col-span-8 font-400 text-black flex items-center text-left">
+                                            <div className="col-span-5 font-400 text-black flex items-center text-left">
                                                 <svg className="w-4 h-4 text-black-light mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
                                                 <span className="truncate text-lg">{file.file_name}</span>
                                             </div>
                                             
-                                            <div className="col-span-3 flex items-center text-left">
-                                                <div className="flex items-center text-left bg-gray-light-light border border-gray rounded-md px-2 py-1">
+                                            <div className="col-span-5 flex items-center text-left">
+                                                <div className="flex items-center text-left">
                                                     {file.file_type_tag && file.file_type_tag.length > 0 ? (
-                                                        <>
-                                                            <span 
-                                                                className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 
-                                                                ${file.file_type_tag.includes('Mortgage_and_Property_Tax') ? 'bg-blue' : 
-                                                                 file.file_type_tag.includes('Income') ? 'bg-green' : 
-                                                                 file.file_type_tag.includes('Investments') ? 'bg-purple' : 
-                                                                 file.file_type_tag.includes('Financial') ? 'bg-yellow' : 
-                                                                 file.file_type_tag.includes('Business') ? 'bg-orange' : 
-                                                                 file.file_type_tag.includes('Expenses') ? 'bg-red' : 'bg-gray'}`}
-                                                            />
-                                                            <span className="text-black-light text-base truncate">
-                                                                {file.file_type_tag.join(', ')}
-                                                            </span>
-                                                        </>
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {file.file_type_tag.map((tag, index) => (
+                                                                <div 
+                                                                    key={index} 
+                                                                    className={`flex items-center px-2 py-1 rounded-full text-base text-black-dark bg-gray-light-light border border-gray rounded-md`}
+                                                                >
+                                                                    <span className={`w-2 h-2 rounded-full mr-1 opacity-70 ${getLabelColor(tag)}`}></span>
+                                                                    {tag}
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     ) : (
-                                                        <>
-                                                            <span className="w-2 h-2 rounded-full mr-2 flex-shrink-0 bg-gray" />
-                                                            <span className="text-black-light text-base truncate">Uncategorized</span>
-                                                        </>
+                                                        <div className="flex items-center px-2 py-1 rounded-full text-xs text-white bg-gray-500">
+                                                            <span className="w-2 h-2 rounded-full mr-1 bg-white opacity-70"></span>
+                                                            Uncategorized
+                                                        </div>
                                                     )}
                                                 </div>
                                             </div>
                                             
-                                            <div className="col-span-1 flex justify-end">
+                                            <div className="col-span-2 flex justify-end">
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();

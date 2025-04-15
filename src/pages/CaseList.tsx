@@ -97,7 +97,7 @@ const CaseList: React.FC = () => {
     return (
         <AnimatedContainer>
             <div className="w-full h-screen mx-auto px-6 py-2 animate-fadeIn">
-                <div className="flex flex-row justify-between items-center p-4 border-b border-gray">
+                <div className="flex flex-row justify-between items-center py-4 border-b border-gray">
                     <div className="flex flex-col gap-1 text-left">
                         <span className="text-black text-2xl font-500 text-left">
                             Cases
@@ -123,7 +123,7 @@ const CaseList: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-lg p-4">
+                <div className="bg-white rounded-lg py-4">
                     {loading ? (
                         <div className="flex justify-center items-center h-64">
                             <p className="text-lg">Loading cases...</p>
@@ -140,27 +140,27 @@ const CaseList: React.FC = () => {
                         <table className="w-full table-auto text-left">
                             <thead className="bg-gray-light">
                                 <tr>
-                                    <th className="py-2 px-3 font-500 text-lg align-middle">Case Name</th>
-                                    <th className="py-2 px-3 font-500 text-lg align-middle">Client</th>
-                                    <th className="py-2 px-3 font-500 text-lg align-middle">Dates</th>
-                                    <th className="py-2 px-3 font-500 text-lg align-middle">Attachments</th>
-                                    <th className="py-2 px-3 font-500 text-lg align-middle">Teammates</th>
+                                    <th className="py-1 px-3 font-500 text-base align-middle">Case Name</th>
+                                    <th className="py-1 px-3 font-500 text-base align-middle">Client</th>
+                                    <th className="py-1 px-3 font-500 text-base align-middle">Dates</th>
+                                    <th className="py-1 px-3 font-500 text-base align-middle">Attachments</th>
+                                    <th className="py-1 px-3 font-500 text-base align-middle">Members</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {cases.map((caseItem) => (
                                     <tr key={caseItem.case_id} className="border-b border-gray hover:bg-gray-light-light">
                                         <Link to={`/case/${caseItem.case_id}`} className="contents">
-                                            <td className="p-3 text-lg align-middle">{caseItem.title}</td>
-                                            <td className="p-3 text-lg align-middle">{caseItem.clientName || "No client name"}</td>
-                                            <td className="p-3 text-lg align-middle">{caseItem.created_at?.split('T')[0] || "N/A"}</td>
-                                            <td className="p-3 text-lg align-middle">
+                                            <td className="px-3 py-2 text-lg align-middle">{caseItem.title}</td>
+                                            <td className="px-3 py-2 text-lg align-middle">{caseItem.clientName || "No client name"}</td>
+                                            <td className="px-3 py-2 text-lg align-middle">{caseItem.created_at?.split('T')[0] || "N/A"}</td>
+                                            <td className="px-3 py-2 text-lg align-middle">
                                                 <span className="text-black-light">
                                                     {/* Placeholder for attachment count */}
                                                     0
                                                 </span>
                                             </td>
-                                            <td className="p-3 text-lg align-middle">
+                                            <td className="px-3 py-2 text-lg align-middle">
                                                 <div className="flex -space-x-2">
                                                     {/* Placeholder avatars */}
                                                     <img

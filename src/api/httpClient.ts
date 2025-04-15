@@ -9,7 +9,7 @@ console.log('Environment variables in httpClient:', {
 });
 
 // IMPORTANT: Override the environment variable with the correct server URL
-const baseURL = 'http://192.168.1.198:5001/api';
+const baseURL = 'http://172.16.37.25:5001/api';
 console.log('Using hardcoded baseURL:', baseURL);
 
 const httpClient = axios.create({

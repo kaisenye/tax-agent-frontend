@@ -51,7 +51,7 @@ const Navbar = () => {
         </div>
 
         {/* Navigation Links */}
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-1">
           {navLinks.slice(0, -1).map(({ id, icon: Icon, label }) => (
             <li key={id}>
               <Link 
