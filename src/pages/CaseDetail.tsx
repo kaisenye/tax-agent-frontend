@@ -253,7 +253,7 @@ const CaseDetail = () => {
                 );
             case 'binder':
                 return (
-                    <div className="bg-white rounded-xl p-6">
+                    <div className="size-full bg-white rounded-xl px-6">
                         {originalFilesLoading ? (
                             <div className="flex justify-center items-center h-64">
                                 <p className="text-lg text-black-light">Loading files...</p>
@@ -415,12 +415,11 @@ const CaseDetail = () => {
 
     return (
         <AnimatedContainer>
-            <div className="w-full h-screen flex flex-col bg-gray-50 p-4">
+            <div className="size-full flex flex-col bg-gray-50 p-4">
                 <nav className="flex border-b border-gray pb-4" aria-label="Breadcrumb">
-                    <ol className="inline-flex items-center space-x-1 md:space-x-1">
+                    <ol className="inline-flex items-center">
                         <li className="inline-flex items-center">
-                            <Link to="/case" className="inline-flex items-center text-base gap-2 font-medium text-black-light hover:text-black">
-                                <IoMdArrowBack className="w-4 h-4"/>
+                            <Link to="/case" className="inline-flex items-center text-lg gap-2 font-medium text-black-light hover:text-black">
                                 Cases
                             </Link>
                         </li>
@@ -434,7 +433,7 @@ const CaseDetail = () => {
                 </nav>
 
                 {/* Top Section - Client Details - text aligned left */}
-                <div className="bg-white rounded-xl p-6">
+                <div className="bg-white rounded-xl px-6 py-4">
                     {caseLoading ? (
                         <div className="flex justify-center items-center h-64">
                             <p className="text-lg">Loading case details...</p>
@@ -497,7 +496,7 @@ const CaseDetail = () => {
                 </div>
 
                 {/* Bottom Section - Navigation Tabs and Content */}
-                <div className="flex-1 flex flex-col pb-16">
+                <div className="flex-1 flex flex-col">
                     {/* Navigation Tabs */}
                     <div className="flex border-b border-gray mb-4 gap-6 text-lg">
                         <button 

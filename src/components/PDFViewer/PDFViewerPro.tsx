@@ -60,7 +60,7 @@ const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer, document, fileP
                 </div>
                 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
+                <div className="flex-1 overflow-y-auto bg-gray-50 py-6">
                     {!fileUrl && !filePageContents ? (
                         <div className="flex items-center justify-center w-full h-full">
                             <div className="animate-pulse text-gray-600">Loading document...</div>
@@ -97,9 +97,9 @@ const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer, document, fileP
                                                             page.file_type_tag.map((tagItem, index) => (
                                                                 <div 
                                                                     key={index} 
-                                                                    className={`flex items-center px-2 py-1 rounded-full text-xs text-white ${getLabelColor(tagItem.label)}`}
+                                                                    className={`flex items-center px-2 py-1 rounded-full text-base text-black-light gap-1 bg-gray-light-light border border-gray rounded-md`}
                                                                 >
-                                                                    <span className="w-2 h-2 rounded-full mr-1 bg-white opacity-70"></span>
+                                                                    <span className={`w-2 h-2 rounded-full mr-1 opacity-70 ${getLabelColor(tagItem.label)}`}></span>
                                                                     {tagItem.label}
                                                                 </div>
                                                             ))
@@ -110,19 +110,19 @@ const PDFViewer = ({ fileUrl, pdfTitle, pdfViewer, setPdfViewer, document, fileP
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <p className="text-base font-500 text-gray-600 mb-2 text-left">Reason</p>
+                                                    <p className="text-base font-500 text-gray-600 mb-2 text-left">Summary</p>
                                                     <span className="text-base text-left text-black-light">
                                                         {page.file_type_tag.length > 0 ? page.file_type_tag[0].reason : "No reason provided"}
                                                     </span>
                                                 </div>
                                                 
                                                 {/* Tax Information */}
-                                                {page.precompute_tax_relevant_info && (
+                                                {/* {page.precompute_tax_relevant_info && (
                                                     <div className="mb-6">
                                                         <h3 className="text-xl font-semibold mb-3 text-left">Tax Information</h3>
                                                         {renderTaxInfo(page.precompute_tax_relevant_info)}
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                             
                                             {/* PDF Viewer - Right Side */}

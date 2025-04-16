@@ -96,7 +96,7 @@ const CaseList: React.FC = () => {
 
     return (
         <AnimatedContainer>
-            <div className="w-full h-screen mx-auto px-6 py-2 animate-fadeIn">
+            <div className="size-full mx-auto px-6 py-2 animate-fadeIn">
                 <div className="flex flex-row justify-between items-center py-4 border-b border-gray">
                     <div className="flex flex-col gap-1 text-left">
                         <span className="text-black text-2xl font-500 text-left">

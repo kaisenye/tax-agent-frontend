@@ -96,7 +96,7 @@ const Research = () => {
 
     return (
         <AnimatedContainer>
-            <div className="w-full h-screen flex flex-col bg-transparent">
+            <div className="size-full flex flex-col bg-transparent">
                 <div className="flex flex-row h-full bg-transparent pl-16">
                     {/* Main chat container */}
                     <div className="flex-1 flex flex-col bg-transparent">
@@ -249,7 +249,7 @@ const Research = () => {
                                 onKeyDown={handleKeyPress}
                                 placeholder="Type your research question here..."
                                 rows={2}
-                                className="w-full px-6 py-4 pr-24 rounded-xl bg-gray-light text-black text-lg font-400
+                                className="w-full px-6 py-4 pr-24 rounded-xl bg-gray-light text-black text-xl font-400
                                            ring-1 ring-gray-light shadow-md
                                            focus:outline-none focus:ring-gray-dark focus:ring-3 transition-all duration-150 resize-none"
                             />
