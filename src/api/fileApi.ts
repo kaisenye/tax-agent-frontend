@@ -1,5 +1,5 @@
 import httpClient from './httpClient';
-import { FileRecord } from '../types/file.types';
+import { FileRecord, FileAPIResponse } from '../types/file.types';
 
 // Get all files for a case
 export const getAllFiles = async (caseId: string): Promise<Array<FileRecord>> => {
@@ -7,6 +7,18 @@ export const getAllFiles = async (caseId: string): Promise<Array<FileRecord>> =>
         const response = await httpClient.get(`/file/${caseId}`);
         console.log("Files response for case", caseId, ":", response);
         return response.data;
+    } catch (error) {
+        console.error("Error getting files:", error);
+        throw error;
+    }
+};
+
+
+export const getAllFilesByTag = async (caseId: string): Promise<FileAPIResponse> => {
+    try {
+        const response = await httpClient.get(`/file/${caseId}/by-tag`);
+        console.log("Files response for case", caseId, ":", response);
+        return response;
     } catch (error) {
         console.error("Error getting files:", error);
         throw error;

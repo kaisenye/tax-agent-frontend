@@ -17,13 +17,13 @@ const UserProfile = () => {
         <div className="w-6 h-6 bg-gray-light rounded-full flex items-center justify-center">
           <LuUser className="w-4 h-4" />
         </div>
-        <span className="text-lg font-500 text-black-light">
+        <span className="text-base font-500 text-black-light">
           {userName || 'Guest'}
         </span>
       </div>
       <button 
         onClick={handleLogout}
-        className="flex flex-row text-black-light font-400 text-xl items-center px-3 py-2 rounded-md transition-colors duration-150 hover:bg-gray hover:text-black"
+        className="flex flex-row text-black-light font-400 text-base items-center px-3 py-2 rounded-md transition-colors duration-150 hover:bg-gray hover:text-black"
       >
         <LuLogOut className="w-4 h-4" />
         <span className="ml-4">Logout</span>

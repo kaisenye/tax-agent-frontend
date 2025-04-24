@@ -27,3 +27,14 @@ export interface FileTypeTagItem {
   label: string;
   reason: string;
 }
+
+
+export interface FileAPIResponse {
+  data: {
+    [key: string]: FileRecord[];
+  };
+  status: number;
+  statusText: string;
+  headers: any;
+  config: any;
+}

@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 
 // Components
 import Navbar from './components/Navbar'
-import ProtectedRoute from './components/Containers/ProtectedRoute'
+import ProtectedRoute from './components/containers/ProtectedRoute'
 
 // Pages
 import Research from './pages/Research'
 import CaseList from './pages/CaseList'
 import CaseDetail from './pages/CaseDetail'
-import ClientChatSession from './pages/ClientChatSession'
 import Login from './pages/Auth/Login'
+import Workspace from './pages/Workspace'
 
 // Context
 import { AuthProvider } from './context/AuthContext'
@@ -30,7 +30,7 @@ function App() {
               <Route path="/research" element={<Research />} />
               <Route path="/case" element={<CaseList />} />
               <Route path="/case/:caseId" element={<CaseDetail />} />
-              <Route path="/chat/:sessionId" element={<ClientChatSession />} />
+              <Route path="/workspace" element={<Workspace />} />
               <Route path="/settings" element={<div>Settings Page</div>} />
             </Route>
           </Route>

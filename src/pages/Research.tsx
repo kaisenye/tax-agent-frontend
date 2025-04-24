@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import AnimatedContainer from '../components/Containers/AnimatedContainer';
+import AnimatedContainer from '../components/containers/AnimatedContainer';
 
 // Icons
 import { FaArrowUp } from "react-icons/fa";
@@ -102,10 +102,10 @@ const Research = () => {
                     <div className="flex-1 flex flex-col bg-transparent">
                     {/* Title section - only show when no messages */}
                     {showInitialContent && (
-                        <div className="pb-32 pt-12">
-                            <h1 className="text-3xl text-black font-500 leading-relaxed text-left">
+                        <div className="pb-24 pt-8">
+                            <h1 className="text-2xl text-black font-500 leading-relaxed text-left">
                                 Tax Research
-                                <p className="block text-lg font-400 text-black-light mt-2 text-left">
+                                <p className="block text-sm font-400 text-black-light mt-2 text-left">
                                     Ask anything about tax laws, regulations, or specific tax scenarios.
                                 </p>
                             </h1>
@@ -114,23 +114,23 @@ const Research = () => {
 
                     {/* Tips section - only show when no messages */}
                     {showInitialContent && (
-                        <div className="mb-12 w-[760px]">
-                            <h2 className="text-xl font-500 text-black mb-6 text-left">Tips & Tricks</h2>
-                            <div className="grid grid-cols-2 gap-4 text-lg">
-                                <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-500 mb-2 text-left">Tax Law Updates</h3>
+                        <div className="mb-8 w-[700px]">
+                            <h2 className="text-lg font-500 text-black mb-4 text-left">Tips & Tricks</h2>
+                            <div className="grid grid-cols-2 gap-3 text-sm">
+                                <div className="p-4 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
+                                    <h3 className="font-500 mb-1 text-left">Tax Law Updates</h3>
                                     <p className="text-left">Latest changes in federal tax regulations</p>
                                 </div>
-                                <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-500 mb-2 text-left">Deductions & Credits</h3>
+                                <div className="p-4 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
+                                    <h3 className="font-500 mb-1 text-left">Deductions & Credits</h3>
                                     <p className="text-left">Explore available tax benefits for 2024</p>
                                 </div>
-                                <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-500 mb-2 text-left">Business Taxation</h3>
+                                <div className="p-4 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
+                                    <h3 className="font-500 mb-1 text-left">Business Taxation</h3>
                                     <p className="text-left">Small business tax obligations and benefits</p>
                                 </div>
-                                <div className="p-6 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
-                                    <h3 className="font-500 mb-2 text-left">State Tax Guidance</h3>
+                                <div className="p-4 rounded-lg border-2 border-gray bg-white shadow-sm text-black-light cursor-pointer hover:bg-gray-light hover:border-gray hover:text-black transition-all duration-300 transform">
+                                    <h3 className="font-500 mb-1 text-left">State Tax Guidance</h3>
                                     <p className="text-left">State-specific tax regulations and filing</p>
                                 </div>
                             </div>
@@ -140,7 +140,7 @@ const Research = () => {
                     {/* Chat messages container */}
                     <div 
                         ref={chatContainerRef}
-                        className="flex-1 overflow-y-auto space-y-6 pr-16 pt-16 pb-48"
+                        className="flex-1 overflow-y-auto space-y-4 pr-12 pt-12 pb-36"
                     >
                         {/* Group messages into conversation sections */}
                         {chatHistory.reduce((sections: JSX.Element[], message, index, array) => {
@@ -148,10 +148,10 @@ const Research = () => {
                                 // Start a new section with user message
                                 const botResponse = array[index + 1];
                                 sections.push(
-                                    <div key={index} className="space-y-6 text-left text-lg">
+                                    <div key={index} className="space-y-4 text-left text-sm">
                                         {/* User message */}
                                         <div className="flex items-start gap-2">
-                                            <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                                            <div className="w-6 h-6 rounded-full flex items-center justify-center">
                                                 <FaUser />
                                             </div>
                                             <div className="rounded-lg px-3 py-2 bg-gray">
@@ -161,10 +161,10 @@ const Research = () => {
 
                                         {/* Bot response with references */}
                                         {botResponse && botResponse.type === 'bot' && (
-                                            <div className="flex gap-6">
+                                            <div className="flex gap-4">
                                                 {/* Bot message */}
                                                 <div className="flex-1 flex items-start gap-2">
-                                                    <div className="w-8 h-8 flex items-center justify-center">
+                                                    <div className="w-6 h-6 flex items-center justify-center">
                                                         <SiRobotframework />
                                                     </div>
                                                     <div className="w-4/5 rounded-lg pl-2 py-1">
@@ -174,7 +174,7 @@ const Research = () => {
                                                             onTypingComplete={() => setIsTyping(false)}
                                                         />
                                                         {!isTyping && (
-                                                            <div className="flex gap-2 mt-4">
+                                                            <div className="flex gap-2 mt-3">
                                                                 {[
                                                                     { icon: <FiThumbsUp />, label: "Good" },
                                                                     { icon: <FiThumbsDown />, label: "Bad" },
@@ -184,10 +184,10 @@ const Research = () => {
                                                                 ].map((item, index) => (
                                                                     <button 
                                                                         key={index}
-                                                                        className="p-2 rounded-full text-black-light hover:text-black-light hover:bg-gray transition-all duration-150 group relative"
+                                                                        className="p-1.5 rounded-full text-black-light hover:text-black-light hover:bg-gray transition-all duration-150 group relative"
                                                                     >
                                                                         {item.icon}
-                                                                        <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black-light text-white text-sm px-2 py-1 rounded-md 
+                                                                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black-light text-white text-xs px-2 py-0.5 rounded-md 
                                                                                opacity-0 group-hover:opacity-100 
                                                                                translate-y-1 group-hover:translate-y-0
                                                                                transition-all duration-200 whitespace-nowrap">
@@ -201,13 +201,13 @@ const Research = () => {
                                                 </div>
 
                                                 {/* References section */}
-                                                <div className="w-72">
-                                                    <div className="p-4 rounded-lg border border-gray-200 shadow-sm">
-                                                        <h3 className="font-medium text-gray-500 mb-3">References</h3>
-                                                        <ul className="space-y-2">
+                                                <div className="w-64">
+                                                    <div className="p-3 rounded-lg border border-gray-200 shadow-sm">
+                                                        <h3 className="font-medium text-gray-500 mb-2 text-xs">References</h3>
+                                                        <ul className="space-y-1">
                                                             {/* Dummy references for visualization */}
                                                             {[1, 2, 3].map((num) => (
-                                                                <li key={num} className="text-sm">
+                                                                <li key={num} className="text-xs">
                                                                     <a 
                                                                         href="#" 
                                                                         className="text-blue-600 hover:underline"
@@ -230,10 +230,10 @@ const Research = () => {
                         {/* Typing indicator */}
                         {isThinking && (
                             <div className="flex items-start gap-2">
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center">
                                     <SiRobotframework />
                                 </div>
-                                <div className="rounded-lg px-3 py-2">
+                                <div className="rounded-lg px-3 py-2 text-sm">
                                     Thinking<span className="typing-dot"></span><span className="typing-dot"></span><span className="typing-dot"></span>
                                 </div>
                             </div>
@@ -249,14 +249,14 @@ const Research = () => {
                                 onKeyDown={handleKeyPress}
                                 placeholder="Type your research question here..."
                                 rows={2}
-                                className="w-full px-6 py-4 pr-24 rounded-xl bg-gray-light text-black text-xl font-400
+                                className="w-full px-5 py-3 pr-20 rounded-xl bg-gray-light text-black text-base font-400
                                            ring-1 ring-gray-light shadow-md
                                            focus:outline-none focus:ring-gray-dark focus:ring-3 transition-all duration-150 resize-none"
                             />
                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
                                 <label 
                                     htmlFor="file-upload"
-                                    className="cursor-pointer p-2 rounded-full bg-gray-dark hover:bg-black-light transition-colors duration-150"
+                                    className="cursor-pointer p-1.5 rounded-full bg-gray-dark hover:bg-black-light transition-colors duration-150"
                                 >
                                     <input
                                         id="file-upload"
@@ -264,16 +264,16 @@ const Research = () => {
                                         className="hidden"
                                         onChange={(e) => {/* Handle file upload */}}
                                     />
-                                    <LuPaperclip className="text-white text-lg" />
+                                    <LuPaperclip className="text-white text-base" />
                                 </label>
                                 <button 
                                     onClick={handleSubmit}
                                     disabled={isLoading || !input}
-                                    className={`p-2 rounded-full text-white transition-colors duration-150 ${
+                                    className={`p-1.5 rounded-full text-white transition-colors duration-150 ${
                                         input && !isLoading ? 'bg-black-light hover:bg-black' : 'bg-gray-dark'
                                     }`}
                                 >
-                                    <FaArrowUp className="text-lg" />
+                                    <FaArrowUp className="text-base" />
                                 </button>
                             </div>
                         </div>

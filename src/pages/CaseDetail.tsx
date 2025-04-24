@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import AnimatedContainer from '../components/Containers/AnimatedContainer';
+import AnimatedContainer from '../components/containers/AnimatedContainer';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import PDFViewer from '../components/PDFViewer/PDFViewerPro';
 import { useAuth } from "../context/AuthContext"; // Import useAuth hook
@@ -239,10 +239,6 @@ const CaseDetail = () => {
         }
         
         setPdfViewer(true);
-    }
-    
-    const handleOpenDocumentDetail = (doc: DocumentItem) => {
-        handleOpenPDFViewer(doc.name, doc);
     }
 
     const renderTabContent = () => {

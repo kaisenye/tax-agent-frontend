@@ -26,9 +26,9 @@ const Navbar = () => {
   const getLinkClassName = (linkId: string) => `
     flex 
     flex-row
-    ${activeLink === linkId ? 'text-black' : 'text-black-light'}
+    ${activeLink === linkId ? 'text-stone-900' : 'text-stone-600'}
     font-400
-    text-xl
+    text-base
     items-center 
     px-3
     py-2
@@ -36,13 +36,13 @@ const Navbar = () => {
     transition-colors 
     duration-150
     ${activeLink === linkId 
-      ? 'bg-gray' 
-      : 'hover:bg-gray hover:text-black'
+      ? 'bg-stone-200' 
+      : 'hover:bg-stone-200 hover:text-stone-900'
     }
   `;
 
   return (
-    <nav className="fixed left-0 top-0 h-screen w-56 bg-gray-light z-10 border-r border-gray p-4 flex flex-col">
+    <nav className="fixed left-0 top-0 h-screen w-56 bg-stone-50 z-10 border-r border-stone-200 p-4 flex flex-col">
       {/* Top Section with Logo and Navigation */}
       <div className="flex-1">
         {/* Logo Section */}
@@ -68,7 +68,7 @@ const Navbar = () => {
       </div>
 
       {/* User Section  */}
-      <div className="flex flex-col gap-2 pt-4 pb-4 border-t border-gray">
+      <div className="flex flex-col gap-2 pt-4 pb-4 border-t border-stone-200">
         <UserProfile />
         {navLinks.slice(-1).map(({ id, icon: Icon, label }) => (
           <Link 

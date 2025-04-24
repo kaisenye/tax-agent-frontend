@@ -9,22 +9,6 @@ export default {
       xl: '1280px',
       '2xl': '1440px',
     },
-    colors: {
-      'blue': '#42A5D6FF',
-      'red': '#C11D1DFF',
-      'purple': '#9688C7FF',
-      'pink': '#CA85BCFF',
-      'orange': '#D8886DFF',
-      'green': '#75B090FF',
-      'yellow': '#ECB212FF',
-      'gray-dark': '#C7C1BEFF',
-      'gray': '#EFECEBFF',
-      'gray-light': '#F9F8F8FF',
-      'gray-light-light': '#FCFCFCFF',
-      'white': '#ffffff',
-      'black': '#1F1F1FFF',
-      'black-light': '#5E594FFF',
-    },
     fontFamily: {
       sans: ['Graphik', 'sans-serif'],
       serif: ['Merriweather', 'serif'],
@@ -34,15 +18,6 @@ export default {
       "500": "500",
       "600": "600",
       "700": "700",
-    },
-    fontSize: {
-      "sm": "11px",
-      "base": "13px",
-      "lg": "14px",
-      "xl": "16px",
-      "2xl": "18px",
-      "3xl": "24px",
-      "4xl": "28px",
     },
     extend: {
       spacing: {
